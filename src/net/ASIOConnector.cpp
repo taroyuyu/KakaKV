@@ -3,12 +3,11 @@
 //
 
 #include <net/ASIOConnector.h>
-#include <boost/asio.hpp>
 namespace kakakv {
     namespace net {
-        ASIOConnector::ASIOConnector(std::string listenIP,unsigned short listenPort):
-        ip(listenIP),port(listenPort){
-        }
+//        ASIOConnector::ASIOConnector(std::string listenIP,unsigned short listenPort,cluster::NodeId selfNodeId,std::shared_ptr<common::EventBus>):
+//        ip(listenIP),port(listenPort){
+//        }
 
         void ASIOConnector::initialize()throw(char*){
             // 1. 创建端口
@@ -48,6 +47,13 @@ namespace kakakv {
             // 创建缓冲区
             std::unique_ptr<char[]> buf(new char[1024]);
             auto input_buf = boost::asio::buffer(static_cast<void*>(buf.get()), 1024);
+        }
+
+        void ASIOConnector::close(){
+
+            if (!this->ioExecutorShared){
+                // 关闭IO线程池
+            }// 如果IO线程池被共享，则按约定由上层服务关闭
         }
     }
 }
