@@ -6,7 +6,7 @@
 namespace kakakv {
     namespace role {
         void Leader::cancelTimeoutOrTask(){
-
+            this->logReplicationTask->cancel();
         }
 
         std::ostream & operator<<(std::ostream & cout,Leader & leader){

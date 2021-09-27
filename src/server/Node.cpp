@@ -323,7 +323,17 @@ namespace kakakv {
             // 更新当前票数
             auto candidate = std::dynamic_pointer_cast<role::Candidate>(this->role);
             int currentVotesCount = candidate->getVotesCount() + 1;
-            // 判断是否过半
+            // 获取节点数
+            int countOfMajor = this->context->mGroup.listReplicationTarget().size() + 1;
+            // 取消选举超时定时器
+            this->role->cancelTimeoutOrTask();
+            if (currentVotesCount > countOfMajor/2){// 票数过半
+                // 成为Leader角色
+                this->changeToRole(std::make_shared<role::Leader>(this->role->getTerm(),this->scheduleLogReplicationTask()));
+            }else{
+                // 修改收到的票数，并重新创建选举超时定时器
+                this->changeToRole(std::make_shared<role::Candidate>(this->role->getTerm(),this->scheduleElectionTimeOut(),currentVotesCount));
+            }
         }
 
         /**

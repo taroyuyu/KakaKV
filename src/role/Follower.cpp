@@ -7,7 +7,7 @@
 namespace kakakv{
     namespace role{
         void Follower::cancelTimeoutOrTask(){
-
+            this->electionTimeout->cancel();
         }
 
         std::ostream & operator<<(std::ostream & cout,Follower & follower){

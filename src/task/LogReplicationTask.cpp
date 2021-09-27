@@ -7,6 +7,7 @@
 namespace kakakv {
     namespace task {
         LogReplicationTask::~LogReplicationTask(){
+            this->cancel();
         }
     }
 }

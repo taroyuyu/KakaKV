@@ -7,6 +7,7 @@
 namespace kakakv {
     namespace task {
         ElectionTimeout::~ElectionTimeout(){
+            this->cancel();
         }
     }
 }

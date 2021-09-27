@@ -7,23 +7,26 @@
 
 #include <role/Role.h>
 #include <cluster/NodeId.h>
-#include <vote/ElectionTimeout.h>
+#include <task//ElectionTimeout.h>
 #include <iostream>
 namespace kakakv {
     namespace role {
         class Candidate:public Role{
             friend std::ostream & operator<<(std::ostream & cout,Candidate & candidate);
         public:
-            Candidate(unsigned long long term,vote::ElectionTimeout electionTimeout,const unsigned int votesCount = 1): Role(term),votesCount(votesCount),electionTimeout(electionTimeout){
+            Candidate(unsigned long long term,std::shared_ptr<task::ElectionTimeout> electionTimeout,const unsigned int votesCount = 1): Role(term),votesCount(votesCount),electionTimeout(electionTimeout){
 
             }
             unsigned int getVotesCount(){
                 return this->votesCount;
             }
+            /**
+             * 取消选举超时定时器
+             */
             void cancelTimeoutOrTask()override;
         private:
             const unsigned int votesCount;
-            const vote::ElectionTimeout electionTimeout;
+            const std::shared_ptr<task::ElectionTimeout> electionTimeout;
         };
         std::ostream & operator<<(std::ostream & cout,Candidate & candidate);
     }

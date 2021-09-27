@@ -7,7 +7,7 @@
 namespace kakakv {
     namespace role {
         void Candidate::cancelTimeoutOrTask(){
-
+            this->electionTimeout->cancel();
         }
         std::ostream & operator<<(std::ostream & cout,Candidate & candidate){
             cout<<"Candidate{term="<<candidate.term<<",votesCount="<<candidate.votesCount<<",electionTimeout="<<candidate.electionTimeout<<"}";

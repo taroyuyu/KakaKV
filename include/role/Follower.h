@@ -22,11 +22,14 @@ namespace kakakv {
             cluster::NodeId getLeaderId(){
                 return this->leaderId;
             }
+            /**
+             * 取消选举超时定时器
+             */
             void cancelTimeoutOrTask()override;
         private:
             const cluster::NodeId votedFor;
             const cluster::NodeId leaderId;
-            std::shared_ptr<task::ElectionTimeout> electionTimeout;
+            const std::shared_ptr<task::ElectionTimeout> electionTimeout;
         };
         std::ostream & operator<<(std::ostream & cout,Follower & follower);
     }
