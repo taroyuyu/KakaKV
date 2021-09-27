@@ -2,16 +2,16 @@
 // Created by 凌宇 on 2021/9/27.
 //
 
-#ifndef KAKAKV_IOSERVCE_H
-#define KAKAKV_IOSERVCE_H
+#ifndef KAKAKV_SELECTOR_H
+#define KAKAKV_SELECTOR_H
 
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <memory>
 namespace kakakv {
-    namespace task {
-        class IOServce {
+    namespace net {
+        class Selector{
         public:
-            IOServce(std::shared_ptr<boost::asio::io_service> IOService,std::shared_ptr<boost::thread_group> IOThreadGroup);
         private:
             std::shared_ptr<boost::asio::io_service> mIOService;
             std::shared_ptr<boost::thread_group> mIOThreadGroup;
@@ -20,4 +20,4 @@ namespace kakakv {
 }
 
 
-#endif //KAKAKV_IOSERVCE_H
+#endif //KAKAKV_SELECTOR_H

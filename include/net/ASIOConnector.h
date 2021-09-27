@@ -7,7 +7,8 @@
 
 #include <net/Connector.h>
 #include <string>
-#include <boost/asio.hpp>
+#include <net/Selector.h>
+#include <task/IOServce.h>
 #include <common/eventBus/EventBus.h>
 #include <cluster/NodeId.h>
 #include <net/InboundChannelGroup.h>
@@ -20,8 +21,8 @@ namespace kakakv{
             void initialize()throw(char*)override;
             void close()override;
         private:
-            const std::shared_ptr<boost::asio::io_service> selectorExecutor; // Selector 线程池
-            const std::shared_ptr<boost::asio::io_service> ioExecutor; // IO 线程池
+            const std::unique_ptr<Selector> selector; // Selector 线程池
+            const std::shared_ptr<task::IOServce> ioService; // IO 线程池
             const bool ioExecutorShared; // 是否和上层服务等共享IO线程池
             const std::shared_ptr<common::EventBus> eventBus;
             const std::string ip;
