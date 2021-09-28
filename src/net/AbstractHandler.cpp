@@ -6,17 +6,19 @@
 
 namespace kakakv {
     namespace net {
-        AbstractHandler::AbstractHandler(std::shared_ptr<common::EventBus> eventBus):
-        mEventBus(eventBus){
-
-        }
-
         AbstractHandler::~AbstractHandler(){
+        }
+
+        void AbstractHandler::channelRead(std::weak_ptr<const Channel> channel,std::shared_ptr<Message> message){
 
         }
 
-        void AbstractHandler::channelActive(std::weak_ptr<Channel> channel){
-            this->mChannel = channel;
+        void AbstractHandler::channelWrite(std::weak_ptr<const Channel> channel,std::shared_ptr<Message> message){
+
+        }
+
+        void AbstractHandler::channelActive(std::weak_ptr<const Channel> channel){
+
         }
     }
 }

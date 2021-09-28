@@ -5,9 +5,8 @@
 #ifndef KAKAKV_ABSTRACTHANDLER_H
 #define KAKAKV_ABSTRACTHANDLER_H
 
-#include <common/eventBus/EventBus.h>
 #include <memory>
-
+#include <net/Message.h>
 namespace kakakv {
     namespace net {
 
@@ -15,12 +14,11 @@ namespace kakakv {
 
         class AbstractHandler {
         public:
-            AbstractHandler(std::shared_ptr<common::EventBus> eventBus);
             virtual ~AbstractHandler() = 0;
         protected:
-            void channelActive(std::weak_ptr<Channel> channel);
-            std::shared_ptr<common::EventBus> mEventBus;
-            std::weak_ptr<Channel> mChannel;
+            virtual void channelRead(std::weak_ptr<const Channel> channel,std::shared_ptr<Message> message);
+            virtual void channelWrite(std::weak_ptr<const Channel> channel,std::shared_ptr<Message> message);
+            virtual void channelActive(std::weak_ptr<const Channel> channel);
         };
     }
 }
