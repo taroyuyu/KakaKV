@@ -12,7 +12,7 @@ namespace kakakv {
         NodeBuilder::NodeBuilder(std::vector<cluster::NodeEndpoint> endpoints,cluster::NodeId selfId): selfId(selfId){
 
         }
-        NodeBuilder & NodeBuilder::setConnector(std::shared_ptr<net::Connector> connector){
+        NodeBuilder & NodeBuilder::setConnector(std::shared_ptr<net::ASIOConnector> connector){
             this->mConnector = connector;
             return *this;
         }

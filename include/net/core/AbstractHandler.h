@@ -6,7 +6,7 @@
 #define KAKAKV_ABSTRACTHANDLER_H
 
 #include <memory>
-#include <net/Message.h>
+#include <net/core/Message.h>
 namespace kakakv {
     namespace net {
 
@@ -19,6 +19,7 @@ namespace kakakv {
             virtual void channelRead(std::weak_ptr<const Channel> channel,std::shared_ptr<Message> message);
             virtual void channelWrite(std::weak_ptr<const Channel> channel,std::shared_ptr<Message> message);
             virtual void channelActive(std::weak_ptr<const Channel> channel);
+            virtual void channelClose(std::weak_ptr<const Channel> channel);
         };
     }
 }

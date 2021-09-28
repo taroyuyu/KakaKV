@@ -5,7 +5,7 @@
 #ifndef KAKAKV_FROMREMOTEHANDLER_H
 #define KAKAKV_FROMREMOTEHANDLER_H
 
-#include <net/AbstractHandler.h>
+#include <net/core/AbstractHandler.h>
 
 namespace kakakv {
     namespace net {

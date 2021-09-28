@@ -13,26 +13,26 @@ namespace kakakv {
         void MockConnector::initialize()throw(char*){
         }
 
-        void MockConnector::sendRequestVote(std::shared_ptr<message::RequestVote> requestVoteMessage,const std::vector<cluster::NodeEndpoint> destinationEndpoints){
-            for (auto destination : destinationEndpoints){
-                auto m = std::make_shared<Message>(destination.nodeId);
-                m->message = requestVoteMessage;
-                this->messageList.push_back(m);
-            }
-        }
+//        void MockConnector::sendRequestVote(std::shared_ptr<message::RequestVote> requestVoteMessage,const std::vector<cluster::NodeEndpoint> destinationEndpoints){
+//            for (auto destination : destinationEndpoints){
+//                auto m = std::make_shared<Message>(destination.nodeId);
+//                m->message = requestVoteMessage;
+//                this->messageList.push_back(m);
+//            }
+//        }
 
 
-        void MockConnector::replyRequestVote(std::shared_ptr<message::RequestVoteResponse> requestVoteResponseMessage,const cluster::NodeEndpoint destinationEndpoint){
-            auto m = std::make_shared<Message>(destinationEndpoint.nodeId);
-            m->result = requestVoteResponseMessage;
-            this->messageList.push_back(m);
-        }
+//        void MockConnector::replyRequestVote(std::shared_ptr<message::RequestVoteResponse> requestVoteResponseMessage,const cluster::NodeEndpoint destinationEndpoint){
+//            auto m = std::make_shared<Message>(destinationEndpoint.nodeId);
+//            m->result = requestVoteResponseMessage;
+//            this->messageList.push_back(m);
+//        }
 
-        void MockConnector::sendAppendEntries(std::shared_ptr<message::AppendEntries> appendEntriesMessage,const cluster::NodeEndpoint destinationEndpoint){
-            auto m = std::make_shared<Message>(destinationEndpoint.nodeId);
-            m->message = appendEntriesMessage;
-            this->messageList.push_back(m);
-        }
+//        void MockConnector::sendAppendEntries(std::shared_ptr<message::AppendEntries> appendEntriesMessage,const cluster::NodeEndpoint destinationEndpoint){
+//            auto m = std::make_shared<Message>(destinationEndpoint.nodeId);
+//            m->message = appendEntriesMessage;
+//            this->messageList.push_back(m);
+//        }
 
         void MockConnector::resetChannels(){
         }

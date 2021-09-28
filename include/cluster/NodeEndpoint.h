@@ -6,7 +6,7 @@
 #define KAKAKV_NODEENDPOINT_H
 
 #include <cluster/NodeId.h>
-#include <net/Endpoint.h>
+#include <net/core/Endpoint.h>
 namespace kakakv {
     namespace cluster {
         class NodeEndpoint {

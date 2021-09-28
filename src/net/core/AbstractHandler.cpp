@@ -2,7 +2,7 @@
 // Created by 凌宇 on 2021/9/28.
 //
 
-#include <net/AbstractHandler.h>
+#include <net/core/AbstractHandler.h>
 
 namespace kakakv {
     namespace net {
@@ -18,6 +18,10 @@ namespace kakakv {
         }
 
         void AbstractHandler::channelActive(std::weak_ptr<const Channel> channel){
+
+        }
+
+        void AbstractHandler::channelClose(std::weak_ptr<const Channel> channel){
 
         }
     }

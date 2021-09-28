@@ -8,7 +8,8 @@
 namespace kakakv {
     namespace net {
         class Decoder {
-
+        public:
+            virtual ~Decoder() = 0;
         };
     }
 }

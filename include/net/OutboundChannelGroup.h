@@ -7,7 +7,7 @@
 
 #include <net/ASIOChannel.h>
 #include <cluster/NodeId.h>
-#include <net/Endpoint.h>
+#include <net/core/Endpoint.h>
 #include <common/eventBus/EventBus.h>
 #include <memory>
 #include <map>

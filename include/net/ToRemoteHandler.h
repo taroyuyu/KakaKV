@@ -5,7 +5,7 @@
 #ifndef KAKAKV_TOREMOTEHANDLER_H
 #define KAKAKV_TOREMOTEHANDLER_H
 
-#include <net/AbstractHandler.h>
+#include <net/core/AbstractHandler.h>
 
 namespace kakakv {
     namespace net {

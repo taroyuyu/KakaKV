@@ -5,7 +5,7 @@
 #ifndef KAKAKV_RAFTMESSAGEHANDLER_H
 #define KAKAKV_RAFTMESSAGEHANDLER_H
 
-#include <net/AbstractHandler.h>
+#include <net/core/AbstractHandler.h>
 #include <common/eventBus/EventBus.h>
 
 namespace kakakv {

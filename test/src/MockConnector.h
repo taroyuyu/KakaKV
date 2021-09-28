@@ -5,7 +5,7 @@
 #ifndef KAKAKV_MOCKCONNECTOR_H
 #define KAKAKV_MOCKCONNECTOR_H
 
-#include <net/Connector.h>
+#include <net/core/Connector.h>
 #include <list>
 namespace kakakv{
     namespace test{
@@ -20,18 +20,18 @@ namespace kakakv{
              * @param requestVoteMessage
              * @param destinationEndpoints
              */
-            void sendRequestVote(std::shared_ptr<message::RequestVote> requestVoteMessage,const const std::vector<cluster::NodeEndpoint> destinationEndpoints)override;
+//            void sendRequestVote(std::shared_ptr<message::RequestVote> requestVoteMessage,const const std::vector<cluster::NodeEndpoint> destinationEndpoints)override;
             /**
              * 回复RequestVote消息
              * @param destinationEndpoint
              */
-            void replyRequestVote(std::shared_ptr<message::RequestVoteResponse> requestVoteResponseMessage,const cluster::NodeEndpoint destinationEndpoint)override;
+//            void replyRequestVote(std::shared_ptr<message::RequestVoteResponse> requestVoteResponseMessage,const cluster::NodeEndpoint destinationEndpoint)override;
             /**
              * 回复AppendEntries
              * @param appendEntriesMessage
              * @param destinationEndpoint
              */
-            void sendAppendEntries(std::shared_ptr<message::AppendEntries> appendEntriesMessage,const cluster::NodeEndpoint destinationEndpoint)override;
+//            void sendAppendEntries(std::shared_ptr<message::AppendEntries> appendEntriesMessage,const cluster::NodeEndpoint destinationEndpoint)override;
             /**
              * 重置连接
              */

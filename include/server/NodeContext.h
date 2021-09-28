@@ -6,7 +6,7 @@
 #define KAKAKV_NODECONTEXT_H
 
 #include <cluster/NodeId.h>
-#include <net/Connector.h>
+#include <net/ASIOConnector.h>
 #include <task/Scheduler.h>
 #include <common/eventBus/EventBus.h>
 #include <server/NodeStore.h>
@@ -24,7 +24,7 @@ namespace kakakv{
             cluster::NodeId selfId()const{
                 return this->mSelfId;
             }
-            std::shared_ptr<net::Connector> connector()const{
+            std::shared_ptr<net::ASIOConnector> connector()const{
                 return this->mConnector;
             }
             std::shared_ptr<task::Scheduler> scheduler()const{
@@ -41,12 +41,12 @@ namespace kakakv{
             void setSelfId(const cluster::NodeId selfId){
                 this->mSelfId = selfId;
             }
-            void setConnector(std::shared_ptr<net::Connector> connector){
+            void setConnector(std::shared_ptr<net::ASIOConnector> connector){
                 this->mConnector = connector;
             }
         private:
             cluster::NodeId mSelfId;
-            std::shared_ptr<net::Connector> mConnector;
+            std::shared_ptr<net::ASIOConnector> mConnector;
             std::shared_ptr<task::Scheduler> mScheduler;
             common::EventBus mEventBus;
             std::shared_ptr<boost::asio::io_service> mIOExecutor; // IO执行器

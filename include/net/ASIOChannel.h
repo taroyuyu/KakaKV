@@ -5,10 +5,14 @@
 #ifndef KAKAKV_ASIOCHANNEL_H
 #define KAKAKV_ASIOCHANNEL_H
 
-#include <net/Channel.h>
+#include <net/core/Channel.h>
 #include <boost/asio.hpp>
 #include <memory>
 #include <set>
+#include <message/RequestVote.h>
+#include <message/RequestVoteResponse.h>
+#include <message/AppendEntries.h>
+#include <message/AppendEntriesResponse.h>
 namespace kakakv{
     namespace net{
         class ASIOChannel:public Channel{
@@ -16,14 +20,15 @@ namespace kakakv{
             ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket,std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder);
             void addHandler(std::shared_ptr<AbstractHandler> handler)override;
             void removeHandler(std::shared_ptr<AbstractHandler> handler)override;
+            void writeMessage(std::shared_ptr<const Message> message)override;
             // 发送RequestVote消息
-            void writeRequestVote(const std::shared_ptr<message::RequestVote> message)override;
+            void writeRequestVote(const std::shared_ptr<message::RequestVote> message);
             // 发送RequestVoteResponse消息
-            void writeRequestVoteResponse(const std::shared_ptr<message::RequestVoteResponse> message)override;
+            void writeRequestVoteResponse(const std::shared_ptr<message::RequestVoteResponse> message);
             // 发送AppendEntries消息
-            void writeAppendEntries(const std::shared_ptr<message::AppendEntries> message)override;
+            void writeAppendEntries(const std::shared_ptr<message::AppendEntries> message);
             // 发送AppendEntriesResponse消息
-            void writeAppendEntriesResponse(const std::shared_ptr<message::AppendEntriesResponse> message)override;
+            void writeAppendEntriesResponse(const std::shared_ptr<message::AppendEntriesResponse> message);
             // 关闭
             void close()override;
             // 添加Close回掉函数

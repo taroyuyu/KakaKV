@@ -25,6 +25,8 @@ namespace kakakv{
             }
             this->mHandlerSet.erase(it);
         }
+        void ASIOChannel::writeMessage(std::shared_ptr<const Message> message){
+        }
         // 发送RequestVote消息
         void ASIOChannel::writeRequestVote(const std::shared_ptr<message::RequestVote> message){
         }

@@ -5,7 +5,7 @@
 #ifndef KAKAKV_ASIOCONNECTOR_H
 #define KAKAKV_ASIOCONNECTOR_H
 
-#include <net/Connector.h>
+#include <net/core/Connector.h>
 #include <string>
 #include <net/Selector.h>
 #include <task/IOServce.h>
@@ -32,14 +32,14 @@ namespace kakakv {
              * @param destinationEndpoints
              */
             void sendRequestVote(std::shared_ptr<message::RequestVote> requestVoteMessage,
-                                 const std::vector<cluster::NodeEndpoint> destinationEndpoints) override;
+                                 const std::vector<cluster::NodeEndpoint> destinationEndpoints);
 
             /**
              * 回复RequestVote消息
              * @param destinationEndpoint
              */
             void replyRequestVote(std::shared_ptr<message::RequestVoteResponse> requestVoteResponseMessage,
-                                  const cluster::NodeEndpoint destinationEndpoint) override;
+                                  const cluster::NodeEndpoint destinationEndpoint);
 
             /**
              * 发送AppendEntries
@@ -47,14 +47,14 @@ namespace kakakv {
              * @param destinationEndpoint
              */
             void sendAppendEntries(std::shared_ptr<message::AppendEntries> appendEntriesMessage,
-                                   const cluster::NodeEndpoint destinationEndpoint) override;
+                                   const cluster::NodeEndpoint destinationEndpoint);
 
             void
             replyAppendEntries(std::shared_ptr<message::AppendEntriesResponse> appendEntriesResponseMessage,
-                               const cluster::NodeEndpoint destinationEndpoint) override;
+                               const cluster::NodeEndpoint destinationEndpoint);
 
         private:
-            std::shared_ptr<Channel> getChannel(cluster::NodeEndpoint endpoint);
+            std::shared_ptr<ASIOChannel> getChannel(cluster::NodeEndpoint endpoint);
 
             const std::unique_ptr<Selector> selector; // Selector 线程池
             const std::shared_ptr<task::IOServce> ioService; // IO 线程池

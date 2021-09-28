@@ -114,7 +114,7 @@ namespace kakakv {
         }
 
 
-        std::shared_ptr<Channel> ASIOConnector::getChannel(cluster::NodeEndpoint endpoint) {
+        std::shared_ptr<ASIOChannel> ASIOConnector::getChannel(cluster::NodeEndpoint endpoint) {
             return this->outboundChannelGroup->getOrConnect(endpoint.nodeId, endpoint.endpoint);
         }
     }
