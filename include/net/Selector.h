@@ -12,6 +12,7 @@ namespace kakakv {
     namespace net {
         class Selector{
         public:
+            void shutdownGracefully();
         private:
             std::shared_ptr<boost::asio::io_service> mIOService;
             std::shared_ptr<boost::thread_group> mIOThreadGroup;

@@ -28,8 +28,9 @@ namespace kakakv {
                 // 连接失败
                 throw "Failed to connect";
             }
-            // 4. 将socket包装成ASIOChanel
-            auto channel = std::make_shared<net::ASIOChannel>(std::move(socket));
+            // 4. TODO:将socket包装成ASIOChanel
+//            auto channel = std::make_shared<net::ASIOChannel>(std::move(socket));
+            std::shared_ptr<net::ASIOChannel> channel = nullptr;
             std::weak_ptr<net::ASIOChannel> channelWeakPtr = channel;
             channel->addCloseCallback([=](net::Channel* channel){
                 auto channelPtr = channelWeakPtr.lock();
@@ -59,6 +60,9 @@ namespace kakakv {
                 return it->second;
             }
 
+        }
+
+        void OutboundChannelGroup::closeAll(){
         }
     }
 }

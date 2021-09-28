@@ -19,6 +19,7 @@ namespace kakakv {
         public:
             OutboundChannelGroup(std::shared_ptr<task::IOServce> ioService,std::shared_ptr<common::EventBus> eventBus,cluster::NodeId selfNodeId);
             std::shared_ptr<ASIOChannel> getOrConnect(cluster::NodeId nodeId,Endpoint endpoint);
+            void closeAll();
         private:
             std::shared_ptr<ASIOChannel> connect(cluster::NodeId nodeId,Endpoint endpoint)throw(char *);
             const std::shared_ptr<task::IOServce> mIOService;

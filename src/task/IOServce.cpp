@@ -9,5 +9,9 @@ namespace kakakv {
         IOServce::IOServce(std::shared_ptr<boost::asio::io_service> ioService,std::shared_ptr<boost::thread_group> ioThreadGroup):
                 mIOService(ioService),mIOThreadGroup(ioThreadGroup){
         }
+
+        void IOServce::shutdownGracefully(){
+
+        }
     }
 }

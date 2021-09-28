@@ -6,7 +6,14 @@
 
 namespace kakakv {
     namespace net {
+        Channel::Channel(std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder):
+        mDecoder(decoder),mEncoder(encoder),openStatus(false){
+        }
         Channel::~Channel() {
+        }
+
+        bool Channel::isOpen()const{
+            return this->openStatus;
         }
     }
 }

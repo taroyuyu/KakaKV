@@ -6,6 +6,8 @@
 
 namespace kakakv {
     namespace net {
+        void Selector::shutdownGracefully(){
 
+        }
     }
 }

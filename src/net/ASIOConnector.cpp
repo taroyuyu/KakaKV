@@ -51,9 +51,12 @@ namespace kakakv {
         }
 
         void ASIOConnector::close() {
-
+            this->inboundChannelGroup->closeAll();
+            this->outboundChannelGroup->closeAll();
+            this->selector->shutdownGracefully();
             if (!this->ioExecutorShared) {
                 // 关闭IO线程池
+                this->ioService->shutdownGracefully();
             }// 如果IO线程池被共享，则按约定由上层服务关闭
         }
 

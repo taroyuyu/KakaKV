@@ -8,11 +8,14 @@
 #include <net/Channel.h>
 #include <boost/asio.hpp>
 #include <memory>
+#include <set>
 namespace kakakv{
     namespace net{
         class ASIOChannel:public Channel{
         public:
-            ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket);
+            ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket,std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder);
+            void addHandler(std::shared_ptr<AbstractHandler> handler)override;
+            void removeHandler(std::shared_ptr<AbstractHandler> handler)override;
             // 发送RequestVote消息
             void writeRequestVote(const std::shared_ptr<message::RequestVote> message)override;
             // 发送RequestVoteResponse消息
@@ -27,6 +30,7 @@ namespace kakakv{
             void addCloseCallback(std::function<void(Channel * channel)> callback)override;
         private:
             const std::unique_ptr<boost::asio::ip::tcp::socket> mSocket;
+            std::set<std::shared_ptr<AbstractHandler>> mHandlerSet;
         };
     }
 }
