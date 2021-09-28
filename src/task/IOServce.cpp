@@ -6,6 +6,8 @@
 
 namespace kakakv {
     namespace task {
-
+        IOServce::IOServce(std::shared_ptr<boost::asio::io_service> ioService,std::shared_ptr<boost::thread_group> ioThreadGroup):
+                mIOService(ioService),mIOThreadGroup(ioThreadGroup){
+        }
     }
 }

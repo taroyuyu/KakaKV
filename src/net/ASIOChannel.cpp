@@ -6,12 +6,15 @@
 
 namespace kakakv{
     namespace net{
+        ASIOChannel::ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket):
+        mSocket(std::move(socket)){
+
+        }
         // 发送RequestVote消息
         void ASIOChannel::writeRequestVote(const std::shared_ptr<message::RequestVote> message){
         }
         // 发送RequestVoteResponse消息
         void ASIOChannel::writeRequestVoteResponse(const std::shared_ptr<message::RequestVoteResponse> message){
-
         }
         // 发送AppendEntries消息
         void ASIOChannel::writeAppendEntries(const std::shared_ptr<message::AppendEntries> message){
