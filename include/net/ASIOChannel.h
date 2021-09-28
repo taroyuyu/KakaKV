@@ -21,6 +21,8 @@ namespace kakakv{
             void writeAppendEntriesResponse(const std::shared_ptr<message::AppendEntriesResponse> message)override;
             // 关闭
             void close()override;
+            // 添加Close回掉函数
+            void addCloseCallback(std::function<void(Channel * channel)> callback)override;
         };
     }
 }

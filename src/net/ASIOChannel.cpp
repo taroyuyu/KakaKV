@@ -24,5 +24,9 @@ namespace kakakv{
         // 关闭
         void ASIOChannel::close(){
         }
+        // 添加Close回掉函数
+        void ASIOChannel::addCloseCallback(std::function<void(Channel * channel)> callback){
+
+        }
     }
 }

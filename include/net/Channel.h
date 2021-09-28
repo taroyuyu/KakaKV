@@ -12,6 +12,7 @@
 
 namespace kakakv {
     namespace net {
+        class Channel;
         class Channel {
         public:
             virtual ~Channel() = 0;
@@ -25,6 +26,8 @@ namespace kakakv {
             virtual void writeAppendEntriesResponse(const std::shared_ptr<message::AppendEntriesResponse> message) = 0;
             // 关闭
             virtual void close() = 0;
+            // 添加Close回掉函数
+            virtual void addCloseCallback(std::function<void(Channel * channel)> callback) = 0;
         };
     }
 }

@@ -8,6 +8,14 @@ namespace kakakv {
     namespace net {
         // 增加连接入口
         void InboundChannelGroup::add(cluster::NodeId remoteId,std::shared_ptr<ASIOChannel> channel){
+            std::weak_ptr<ASIOChannel> channelWeakPtr = channel;
+            channel->addCloseCallback([=](Channel * channel){
+                auto channelPtr = channelWeakPtr.lock();
+                if (!channelPtr || channelPtr.get() != channel){
+                    return ;
+                }
+                this->channels.remove(channelPtr);
+            });
         }
         // 移除连接
         void InboundChannelGroup::remove(std::shared_ptr<ASIOChannel> channel){
