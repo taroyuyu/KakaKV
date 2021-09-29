@@ -31,7 +31,7 @@ namespace kakakv {
 
                 size_t getUsed()override;
 
-                bool check()override;
+                bool check();
 
             private:
                 struct Node {
