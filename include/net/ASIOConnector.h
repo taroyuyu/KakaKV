@@ -17,12 +17,17 @@
 
 namespace kakakv {
     namespace net {
-        class ASIOConnector : public net::Connector {
+        class ASIOConnector : public net::Connector, public  Selector::Listener,private std::enable_shared_from_this<ASIOConnector> {
         public:
             ASIOConnector(cluster::NodeId selfNodeId, std::shared_ptr<common::EventBus> eventBus,
                           std::string listenIP = "0.0.0.0", unsigned short listenPort = 6000);
 
             void initialize() throw(char *) override;
+
+            /**
+             * 重置连接
+             */
+            void resetChannels() override;
 
             void close() override;
 
@@ -54,6 +59,7 @@ namespace kakakv {
                                const cluster::NodeEndpoint destinationEndpoint);
 
         private:
+            void onReceiveConnect(std::shared_ptr<ASIOChannel> channel) override;
             std::shared_ptr<ASIOChannel> getChannel(cluster::NodeEndpoint endpoint);
 
             const std::unique_ptr<Selector> selector; // Selector 线程池
