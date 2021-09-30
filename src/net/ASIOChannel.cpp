@@ -151,6 +151,7 @@ namespace kakakv {
         void ASIOChannel::sendByteStream() {
             //1. 判断是否需要更新临时输出缓冲区
             if (this->mOutputCodecBuffer->getUsed() > this->mTmpOutputBufferLength) {
+                // 更新临时输出缓冲区
                 this->mTmpOutputBufferLength = this->mOutputCodecBuffer->getUsed();
                 this->mTmpoutputBuffer.reset(new char[mTmpOutputBufferLength]);
             }
@@ -163,7 +164,7 @@ namespace kakakv {
                       (const boost::uint8_t *) mTmpoutputBuffer.get() + length, std::back_inserter(*output));
             this->mOutputBuffer.push_back(output);
             //4. 准备发送
-            bool canSendNow = this->mOutputBuffer.empty();
+            const bool canSendNow = this->mOutputBuffer.empty();
             if (canSendNow) {
                 boost::asio::async_write(*this->mSocket, boost::asio::buffer(*this->mOutputBuffer.front()),
                                          boost::bind(&ASIOChannel::onSend, this->shared_from_this(),
@@ -174,7 +175,7 @@ namespace kakakv {
         void ASIOChannel::onSend(const boost::system::error_code &ec,
                                  std::list<std::shared_ptr<std::vector<boost::uint8_t>>>::iterator itr) {
             if (ec) {
-                //发送失败
+                //发送失败则直接关闭连接
                 this->close();
                 return;
             }
@@ -197,12 +198,13 @@ namespace kakakv {
 
         void ASIOChannel::onRecv(const boost::system::error_code &ec, size_t bytesTransferred) {
             if (ec) {
+                // 读取失败，则关闭连接
                 this->close();
                 return;
             }
             // 将数据放入mInputCodecBuffer中
             this->mInputCodecBuffer->append(this->mTmpInputBuffer.get(), bytesTransferred);
-            // 尝试提取数据
+            // 尝试提取数据包
             std::shared_ptr<::google::protobuf::Message> message;
             while (this->mDecoder->tryToretriveMessage(this->mInputCodecBuffer, message)) {
                 // 将消息转换成内部格式
@@ -275,7 +277,6 @@ namespace kakakv {
             } else {
                 return nullptr;
             }
-
         }
 
         // 关闭
@@ -293,6 +294,14 @@ namespace kakakv {
             //2. 执行Close回掉函数
             for (auto callback: this->closeCallbackList) {
                 callback(this->shared_from_this());
+            }
+            //3. 通知handler
+            for (auto handlerWeakPtr : this->mHandlerSet){
+                auto handler = handlerWeakPtr.lock();
+                if (!handler){
+                    continue;
+                }
+                handler->channelClose(this->shared_from_this());
             }
         }
 

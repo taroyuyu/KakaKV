@@ -48,7 +48,7 @@ namespace kakakv {
             // 关闭
             void close() override;
 
-            // 添加Close回掉函数
+            // 添加Close回调函数
             void addCloseCallback(std::function<void(std::shared_ptr<Channel> channel)> callback) override;
 
         private:
