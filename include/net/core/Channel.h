@@ -9,9 +9,10 @@
 #include <net/core/Decoder.h>
 #include <net/core/Encoder.h>
 #include <functional>
+#include <list>
 namespace kakakv {
     namespace net {
-        class Channel {
+        class Channel{
         public:
             Channel(std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder);
             virtual ~Channel() = 0;
@@ -22,11 +23,12 @@ namespace kakakv {
             // 关闭
             virtual void close() = 0;
             // 添加Close回掉函数
-            virtual void addCloseCallback(std::function<void(Channel * channel)> callback) = 0;
+            virtual void addCloseCallback(std::function<void(std::shared_ptr<Channel> channel)> callback) = 0;
         protected:
             std::shared_ptr<Decoder> mDecoder;
             std::shared_ptr<Encoder> mEncoder;
             mutable bool openStatus;
+            std::list<std::function<void(std::shared_ptr<Channel> channel)>> closeCallbackList;
         };
     }
 }

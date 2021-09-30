@@ -108,10 +108,24 @@ namespace kakakv{
         }
         // 关闭
         void ASIOChannel::close(){
+            //1. 关闭连接
+            boost::system::error_code ec;
+            this->mSocket->shutdown(boost::asio::ip::tcp::socket::shutdown_both,ec);
+            if (ec){
+
+            }
+            this->mSocket->close(ec);
+            if (ec){
+
+            }
+            //2. 执行Close回掉函数
+            for (auto callback : this->closeCallbackList){
+                callback(this->shared_from_this());
+            }
         }
         // 添加Close回掉函数
-        void ASIOChannel::addCloseCallback(std::function<void(Channel * channel)> callback){
-
+        void ASIOChannel::addCloseCallback(std::function<void(std::shared_ptr<Channel> channel)> callback){
+            this->closeCallbackList.push_back(callback);
         }
     }
 }

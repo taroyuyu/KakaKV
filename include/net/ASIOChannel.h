@@ -16,7 +16,7 @@
 namespace kakakv{
     namespace net{
         class Selector;
-        class ASIOChannel:public Channel{
+    class ASIOChannel:public Channel,private std::enable_shared_from_this<ASIOChannel>{
         public:
             friend Selector;
             ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket,std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder);
@@ -34,7 +34,7 @@ namespace kakakv{
             // 关闭
             void close()override;
             // 添加Close回掉函数
-            void addCloseCallback(std::function<void(Channel * channel)> callback)override;
+            void addCloseCallback(std::function<void(std::shared_ptr<Channel> channel)> callback)override;
         private:
             const std::unique_ptr<boost::asio::ip::tcp::socket> mSocket;
             std::set<std::shared_ptr<AbstractHandler>> mHandlerSet;

@@ -37,9 +37,9 @@ namespace kakakv {
             auto codec = std::make_shared<ASIOCodec>();
             auto channel = std::make_shared<ASIOChannel>(std::move(socket), codec, codec);
             std::weak_ptr<net::ASIOChannel> channelWeakPtr = channel;
-            channel->addCloseCallback([=](net::Channel *channel) {
+            channel->addCloseCallback([=](std::shared_ptr<net::Channel> channel) {
                 auto channelPtr = channelWeakPtr.lock();
-                if (!channelPtr || channelPtr.get() != channel) {
+                if (!channelPtr || channelPtr != channel) {
                     return;
                 }
                 // 连接关闭后从组中移除

@@ -9,9 +9,9 @@ namespace kakakv {
         // 增加连接入口
         void InboundChannelGroup::add(cluster::NodeId remoteId,std::shared_ptr<ASIOChannel> channel){
             std::weak_ptr<ASIOChannel> channelWeakPtr = channel;
-            channel->addCloseCallback([=](Channel * channel){
+            channel->addCloseCallback([=](std::shared_ptr<Channel> channel){
                 auto channelPtr = channelWeakPtr.lock();
-                if (!channelPtr || channelPtr.get() != channel){
+                if (!channelPtr || channelPtr != channel){
                     return ;
                 }
                 this->channels.remove(channelPtr);
