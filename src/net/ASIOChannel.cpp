@@ -17,7 +17,7 @@ namespace kakakv {
                 mInputCodecBuffer(std::make_shared<common::net::CircleBuffer>(1024)), mTmpInputBufferLength(1024),
                 mTmpInputBuffer(new char[1024]),
                 mTmpOutputBufferLength(0), nodeId(cluster::NULLNodeId) {
-
+            this->waitForReceive();
         }
 
         void ASIOChannel::addHandler(std::weak_ptr<AbstractHandler> handler) {
