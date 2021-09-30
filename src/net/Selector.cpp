@@ -3,7 +3,8 @@
 //
 
 #include <net/Selector.h>
-
+#include <net/ASIOCodec.h>
+#include <net/ASIOChannel.h>
 namespace kakakv {
     namespace net {
         Selector::Listener::~Listener() {
@@ -55,24 +56,28 @@ namespace kakakv {
         }
 
         void Selector::waitForAccept() {
-            auto socket = std::make_shared<boost::asio::ip::tcp::socket>(*this->mIOService);
-            this->mAcceptor->async_accept(*socket,[this,socket](const boost::system::error_code & ec){
-                if (ec || !socket){
+            //1. 创建Socket并将其封装成Channel
+            auto codec = std::make_shared<ASIOCodec>();
+            auto channel = std::make_shared<ASIOChannel>(std::make_unique<boost::asio::ip::tcp::socket>(*this->mIOService),codec,codec);
+            //2. 等待客户端连接
+            this->mAcceptor->async_accept(*channel->mSocket,[this,channel](const boost::system::error_code & ec){
+                if (ec || !channel){
                     return;
                 }
                 if (this->mStart.load()){
-                    //1. 将socket封装成ASIOChannel
-                    //2. 通知Listener
+                    //1. 通知Listener
                     for(auto listenWeakPtr : this->mListenerSet){
                         auto listener = listenWeakPtr.lock();
                         if (!listener){
                             continue;
                         }
-//                        listener->onReceiveConnect();
+                        listener->onReceiveConnect(channel);
                     }
+                    //2. 等待新的客户端连接
                     this->waitForAccept();
                 }else{
-                    socket->close();
+                    // 关闭连接
+                    channel->mSocket->close();
                 }
             });
         }

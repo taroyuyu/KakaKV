@@ -15,8 +15,10 @@
 #include <message/AppendEntriesResponse.h>
 namespace kakakv{
     namespace net{
+        class Selector;
         class ASIOChannel:public Channel{
         public:
+            friend Selector;
             ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket,std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder);
             void addHandler(std::shared_ptr<AbstractHandler> handler)override;
             void removeHandler(std::shared_ptr<AbstractHandler> handler)override;
