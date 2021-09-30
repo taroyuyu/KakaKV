@@ -24,13 +24,13 @@ namespace kakakv{
             void removeHandler(std::shared_ptr<AbstractHandler> handler)override;
             void writeMessage(std::shared_ptr<const Message> message)override;
             // 发送RequestVote消息
-            void writeRequestVote(const std::shared_ptr<message::RequestVote> message);
+            void writeRequestVote(const std::shared_ptr<const message::RequestVote> message);
             // 发送RequestVoteResponse消息
-            void writeRequestVoteResponse(const std::shared_ptr<message::RequestVoteResponse> message);
+            void writeRequestVoteResponse(const std::shared_ptr<const message::RequestVoteResponse> message);
             // 发送AppendEntries消息
-            void writeAppendEntries(const std::shared_ptr<message::AppendEntries> message);
+            void writeAppendEntries(const std::shared_ptr<const message::AppendEntries> message);
             // 发送AppendEntriesResponse消息
-            void writeAppendEntriesResponse(const std::shared_ptr<message::AppendEntriesResponse> message);
+            void writeAppendEntriesResponse(const std::shared_ptr<const message::AppendEntriesResponse> message);
             // 关闭
             void close()override;
             // 添加Close回掉函数
@@ -38,6 +38,8 @@ namespace kakakv{
         private:
             const std::unique_ptr<boost::asio::ip::tcp::socket> mSocket;
             std::set<std::shared_ptr<AbstractHandler>> mHandlerSet;
+            std::shared_ptr<Decoder> mDecoder;
+            std::shared_ptr<Encoder> mEncoder;
         };
     }
 }

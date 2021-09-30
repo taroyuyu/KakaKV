@@ -117,7 +117,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_KakaKVRaftMessage_2eproto::off
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::kakakv::net::message::RequestVoteResponseMessage, term_),
   PROTOBUF_FIELD_OFFSET(::kakakv::net::message::RequestVoteResponseMessage, votegranted_),
-  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::kakakv::net::message::AppendEntriesMessage_Entry, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::kakakv::net::message::AppendEntriesMessage_Entry, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -126,6 +126,10 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_KakaKVRaftMessage_2eproto::off
   PROTOBUF_FIELD_OFFSET(::kakakv::net::message::AppendEntriesMessage_Entry, index_),
   PROTOBUF_FIELD_OFFSET(::kakakv::net::message::AppendEntriesMessage_Entry, term_),
   PROTOBUF_FIELD_OFFSET(::kakakv::net::message::AppendEntriesMessage_Entry, data_),
+  ~0u,
+  ~0u,
+  ~0u,
+  0,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::kakakv::net::message::AppendEntriesMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -148,9 +152,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_KakaKVRaftMessage_2eproto::off
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::kakakv::net::message::RequestVoteMessage)},
   { 9, -1, sizeof(::kakakv::net::message::RequestVoteResponseMessage)},
-  { 16, -1, sizeof(::kakakv::net::message::AppendEntriesMessage_Entry)},
-  { 25, -1, sizeof(::kakakv::net::message::AppendEntriesMessage)},
-  { 36, -1, sizeof(::kakakv::net::message::AppendEntriesResponseMessage)},
+  { 16, 25, sizeof(::kakakv::net::message::AppendEntriesMessage_Entry)},
+  { 29, -1, sizeof(::kakakv::net::message::AppendEntriesMessage)},
+  { 40, -1, sizeof(::kakakv::net::message::AppendEntriesResponseMessage)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -167,21 +171,22 @@ const char descriptor_table_protodef_KakaKVRaftMessage_2eproto[] PROTOBUF_SECTIO
   "\004\022\023\n\013candidateId\030\002 \001(\t\022\024\n\014lastLogIndex\030\003"
   " \001(\004\022\023\n\013lastLogTerm\030\004 \001(\004\"\?\n\032RequestVote"
   "ResponseMessage\022\014\n\004term\030\001 \001(\004\022\023\n\013voteGra"
-  "nted\030\002 \001(\010\"\327\002\n\024AppendEntriesMessage\022\014\n\004t"
+  "nted\030\002 \001(\010\"\345\002\n\024AppendEntriesMessage\022\014\n\004t"
   "erm\030\001 \001(\004\022\020\n\010leaderId\030\002 \001(\t\022\024\n\014prevLogIn"
   "dex\030\003 \001(\004\022\023\n\013prevLogTerm\030\004 \001(\004\022\024\n\014leader"
   "Commit\030\005 \001(\004\022A\n\tentryList\030\006 \003(\0132..kakakv"
   ".net.message.AppendEntriesMessage.Entry\032"
-  "\232\001\n\005Entry\022A\n\004kind\030\001 \001(\01623.kakakv.net.mes"
+  "\250\001\n\005Entry\022A\n\004kind\030\001 \001(\01623.kakakv.net.mes"
   "sage.AppendEntriesMessage.Entry.Kind\022\r\n\005"
-  "index\030\002 \001(\004\022\014\n\004term\030\003 \001(\004\022\014\n\004data\030\004 \001(\014\""
-  "#\n\004Kind\022\016\n\nGeneralLog\020\000\022\013\n\007NoOpLog\020\001\"=\n\034"
-  "AppendEntriesResponseMessage\022\014\n\004term\030\001 \001"
-  "(\004\022\017\n\007success\030\002 \001(\010b\006proto3"
+  "index\030\002 \001(\004\022\014\n\004term\030\003 \001(\004\022\021\n\004data\030\004 \001(\014H"
+  "\000\210\001\001\"#\n\004Kind\022\016\n\nGeneralLog\020\000\022\013\n\007NoOpLog\020"
+  "\001B\007\n\005_data\"=\n\034AppendEntriesResponseMessa"
+  "ge\022\014\n\004term\030\001 \001(\004\022\017\n\007success\030\002 \001(\010b\006proto"
+  "3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_KakaKVRaftMessage_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_KakaKVRaftMessage_2eproto = {
-  false, false, 627, descriptor_table_protodef_KakaKVRaftMessage_2eproto, "KakaKVRaftMessage.proto", 
+  false, false, 641, descriptor_table_protodef_KakaKVRaftMessage_2eproto, "KakaKVRaftMessage.proto", 
   &descriptor_table_KakaKVRaftMessage_2eproto_once, nullptr, 0, 5,
   schemas, file_default_instances, TableStruct_KakaKVRaftMessage_2eproto::offsets,
   file_level_metadata_KakaKVRaftMessage_2eproto, file_level_enum_descriptors_KakaKVRaftMessage_2eproto, file_level_service_descriptors_KakaKVRaftMessage_2eproto,
@@ -724,6 +729,10 @@ void RequestVoteResponseMessage::InternalSwap(RequestVoteResponseMessage* other)
 
 class AppendEntriesMessage_Entry::_Internal {
  public:
+  using HasBits = decltype(std::declval<AppendEntriesMessage_Entry>()._has_bits_);
+  static void set_has_data(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
 };
 
 AppendEntriesMessage_Entry::AppendEntriesMessage_Entry(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -736,10 +745,11 @@ AppendEntriesMessage_Entry::AppendEntriesMessage_Entry(::PROTOBUF_NAMESPACE_ID::
   // @@protoc_insertion_point(arena_constructor:kakakv.net.message.AppendEntriesMessage.Entry)
 }
 AppendEntriesMessage_Entry::AppendEntriesMessage_Entry(const AppendEntriesMessage_Entry& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_data().empty()) {
+  if (from._internal_has_data()) {
     data_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_data(), 
       GetArenaForAllocation());
   }
@@ -785,15 +795,20 @@ void AppendEntriesMessage_Entry::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  data_.ClearToEmpty();
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    data_.ClearNonDefaultToEmpty();
+  }
   ::memset(&index_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&kind_) -
       reinterpret_cast<char*>(&index_)) + sizeof(kind_));
+  _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* AppendEntriesMessage_Entry::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
@@ -820,7 +835,7 @@ const char* AppendEntriesMessage_Entry::_InternalParse(const char* ptr, ::PROTOB
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // bytes data = 4;
+      // optional bytes data = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
           auto str = _internal_mutable_data();
@@ -844,6 +859,7 @@ const char* AppendEntriesMessage_Entry::_InternalParse(const char* ptr, ::PROTOB
     }  // switch
   }  // while
 success:
+  _has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -876,8 +892,8 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(3, this->_internal_term(), target);
   }
 
-  // bytes data = 4;
-  if (!this->_internal_data().empty()) {
+  // optional bytes data = 4;
+  if (_internal_has_data()) {
     target = stream->WriteBytesMaybeAliased(
         4, this->_internal_data(), target);
   }
@@ -898,8 +914,9 @@ size_t AppendEntriesMessage_Entry::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // bytes data = 4;
-  if (!this->_internal_data().empty()) {
+  // optional bytes data = 4;
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
         this->_internal_data());
@@ -953,7 +970,7 @@ void AppendEntriesMessage_Entry::MergeFrom(const AppendEntriesMessage_Entry& fro
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_data().empty()) {
+  if (from._internal_has_data()) {
     _internal_set_data(from._internal_data());
   }
   if (from._internal_index() != 0) {
@@ -982,6 +999,7 @@ bool AppendEntriesMessage_Entry::IsInitialized() const {
 void AppendEntriesMessage_Entry::InternalSwap(AppendEntriesMessage_Entry* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &data_, GetArenaForAllocation(),

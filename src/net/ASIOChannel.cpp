@@ -3,11 +3,13 @@
 //
 
 #include <net/ASIOChannel.h>
-
+#include <net/serialization/KakaKVRaftMessage.pb.h>
+#include <log/GeneralLogEntry.h>
+#include <log/NoOpLogEntry.h>
 namespace kakakv{
     namespace net{
         ASIOChannel::ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket,std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder):
-        Channel(decoder,encoder),mSocket(std::move(socket)){
+        Channel(decoder,encoder),mSocket(std::move(socket)),mDecoder(decoder),mEncoder(encoder){
 
         }
 
@@ -26,20 +28,83 @@ namespace kakakv{
             this->mHandlerSet.erase(it);
         }
         void ASIOChannel::writeMessage(std::shared_ptr<const Message> message){
+            if (!message){
+                return;
+            }
+            if (typeid(message.get()) == typeid(const kakakv::message::RequestVote*)){
+                auto requestVoteMessage = std::dynamic_pointer_cast<const kakakv::message::RequestVote>(message);
+                assert(requestVoteMessage);
+                this->writeRequestVote(requestVoteMessage);
+            }else if (typeid(message.get()) == typeid(const kakakv::message::RequestVoteResponse*)){
+                auto requestVoteResponseMessage = std::dynamic_pointer_cast<const kakakv::message::RequestVoteResponse>(message);
+                assert(requestVoteResponseMessage);
+                this->writeRequestVoteResponse(requestVoteResponseMessage);
+            }else if (typeid(message.get()) == typeid(const kakakv::message::AppendEntries*)){
+                auto appendEntriesMessage = std::dynamic_pointer_cast<const kakakv::message::AppendEntries>(message);
+                assert(appendEntriesMessage);
+                this->writeAppendEntries(appendEntriesMessage);
+            }else if (typeid(message.get()) == typeid(const kakakv::message::AppendEntriesResponse*)){
+                auto appendEntriesResponseMessage = std::dynamic_pointer_cast<const kakakv::message::AppendEntriesResponse>(message);
+                assert(appendEntriesResponseMessage);
+                this->writeAppendEntriesResponse(appendEntriesResponseMessage);
+            }else{
+                //未知类型
+                assert(false);
+            }
         }
         // 发送RequestVote消息
-        void ASIOChannel::writeRequestVote(const std::shared_ptr<message::RequestVote> message){
+        void ASIOChannel::writeRequestVote(const std::shared_ptr<const kakakv::message::RequestVote> message){
+            //1. 将消息封装成Protobuf格式
+            auto requestVoteMessage = std::make_shared<message::RequestVoteMessage>();
+            requestVoteMessage->set_term(message->term);
+            requestVoteMessage->set_candidateid(message->candidateId);
+            requestVoteMessage->set_lastlogterm(message->lastLogTerm);
+            requestVoteMessage->set_lastlogindex(message->lastLogIndex);
+            assert(requestVoteMessage->IsInitialized());
         }
         // 发送RequestVoteResponse消息
-        void ASIOChannel::writeRequestVoteResponse(const std::shared_ptr<message::RequestVoteResponse> message){
+        void ASIOChannel::writeRequestVoteResponse(const std::shared_ptr<const kakakv::message::RequestVoteResponse> message){
+            //1. 将消息封装成Protobuf格式
+            auto requestVoteResponseMessage = std::make_shared<message::RequestVoteResponseMessage>();
+            requestVoteResponseMessage->set_term(message->term);
+            requestVoteResponseMessage->set_votegranted(message->voteGranted);
+            assert(requestVoteResponseMessage->IsInitialized());
         }
         // 发送AppendEntries消息
-        void ASIOChannel::writeAppendEntries(const std::shared_ptr<message::AppendEntries> message){
-
+        void ASIOChannel::writeAppendEntries(const std::shared_ptr<const kakakv::message::AppendEntries> message){
+            //1. 将消息封装成Protobuf格式
+            auto appendEntriesMessage = std::make_shared<message::AppendEntriesMessage>();
+            appendEntriesMessage->set_term(message->term);
+            appendEntriesMessage->set_leaderid(message->leaderId);
+            appendEntriesMessage->set_prevlogterm(message->prevLogTerm);
+            appendEntriesMessage->set_prevlogindex(message->prevLogIndex);
+            appendEntriesMessage->set_leadercommit(message->leaderCommitIndex);
+            for(auto entry : message->entryList){
+                auto entryItem = appendEntriesMessage->add_entrylist();
+                entryItem->set_index(entry->getIndex());
+                entryItem->set_term(entry->getTerm());
+                if (typeid(entry.get()) == typeid(log::GeneralLogEntry*)){
+                    entryItem->set_kind(message::AppendEntriesMessage_Entry_Kind_GeneralLog);
+                    auto generalLog = std::dynamic_pointer_cast<log::GeneralLogEntry>(entry);
+                    assert(generalLog);
+                    std::string data(generalLog->getPayload().first, generalLog->getPayload().second);
+                    entryItem->set_data(data);
+                }else if (typeid(entry.get()) == typeid(log::NoOpLogEntry*)){
+                    entryItem->set_kind(message::AppendEntriesMessage_Entry_Kind_NoOpLog);
+                }else{
+                    assert(false);
+                    continue;
+                }
+            }
+            assert(appendEntriesMessage->IsInitialized());
         }
         // 发送AppendEntriesResponse消息
-        void ASIOChannel::writeAppendEntriesResponse(const std::shared_ptr<message::AppendEntriesResponse> message){
-
+        void ASIOChannel::writeAppendEntriesResponse(const std::shared_ptr<const kakakv::message::AppendEntriesResponse> message){
+            //1. 将消息封装成Protobuf格式
+            auto appendEntriesResponseMessage = std::make_shared<message::AppendEntriesResponseMessage>();
+            appendEntriesResponseMessage->set_term(message->term);
+            appendEntriesResponseMessage->set_success(message->success);
+            assert(appendEntriesResponseMessage->IsInitialized());
         }
         // 关闭
         void ASIOChannel::close(){

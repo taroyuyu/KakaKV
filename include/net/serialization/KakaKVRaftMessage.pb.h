@@ -590,7 +590,11 @@ class AppendEntriesMessage_Entry final :
     kTermFieldNumber = 3,
     kKindFieldNumber = 1,
   };
-  // bytes data = 4;
+  // optional bytes data = 4;
+  bool has_data() const;
+  private:
+  bool _internal_has_data() const;
+  public:
   void clear_data();
   const std::string& data() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -638,11 +642,12 @@ class AppendEntriesMessage_Entry final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
   ::PROTOBUF_NAMESPACE_ID::uint64 index_;
   ::PROTOBUF_NAMESPACE_ID::uint64 term_;
   int kind_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_KakaKVRaftMessage_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1230,9 +1235,17 @@ inline void AppendEntriesMessage_Entry::set_term(::PROTOBUF_NAMESPACE_ID::uint64
   // @@protoc_insertion_point(field_set:kakakv.net.message.AppendEntriesMessage.Entry.term)
 }
 
-// bytes data = 4;
+// optional bytes data = 4;
+inline bool AppendEntriesMessage_Entry::_internal_has_data() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool AppendEntriesMessage_Entry::has_data() const {
+  return _internal_has_data();
+}
 inline void AppendEntriesMessage_Entry::clear_data() {
   data_.ClearToEmpty();
+  _has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& AppendEntriesMessage_Entry::data() const {
   // @@protoc_insertion_point(field_get:kakakv.net.message.AppendEntriesMessage.Entry.data)
@@ -1241,7 +1254,7 @@ inline const std::string& AppendEntriesMessage_Entry::data() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void AppendEntriesMessage_Entry::set_data(ArgT0&& arg0, ArgT... args) {
- 
+ _has_bits_[0] |= 0x00000001u;
  data_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:kakakv.net.message.AppendEntriesMessage.Entry.data)
 }
@@ -1254,22 +1267,26 @@ inline const std::string& AppendEntriesMessage_Entry::_internal_data() const {
   return data_.Get();
 }
 inline void AppendEntriesMessage_Entry::_internal_set_data(const std::string& value) {
-  
+  _has_bits_[0] |= 0x00000001u;
   data_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
 inline std::string* AppendEntriesMessage_Entry::_internal_mutable_data() {
-  
+  _has_bits_[0] |= 0x00000001u;
   return data_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
 inline std::string* AppendEntriesMessage_Entry::release_data() {
   // @@protoc_insertion_point(field_release:kakakv.net.message.AppendEntriesMessage.Entry.data)
-  return data_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+  if (!_internal_has_data()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000001u;
+  return data_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
 inline void AppendEntriesMessage_Entry::set_allocated_data(std::string* data) {
   if (data != nullptr) {
-    
+    _has_bits_[0] |= 0x00000001u;
   } else {
-    
+    _has_bits_[0] &= ~0x00000001u;
   }
   data_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), data,
       GetArenaForAllocation());

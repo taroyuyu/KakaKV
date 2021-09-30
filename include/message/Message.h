@@ -5,9 +5,11 @@
 #ifndef KAKAKV_MESSAGE_H
 #define KAKAKV_MESSAGE_H
 
+#include <net/core/Message.h>
+
 namespace kakakv{
     namespace message{
-        class Message {
+    class Message:public net::Message{
         public:
             Message(const unsigned long long term):term(term){
             }

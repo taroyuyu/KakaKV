@@ -13,4 +13,4 @@ add_executable(KakaKV main.cpp src/log/LogEntry.cpp src/log/GeneralLogEntry.cpp 
 find_package(protobuf CONFIG REQUIRED)
 add_library(Serialization src/net/serialization/KakaKVRaftMessage.pb.cc)
 target_link_libraries(Serialization PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
-target_link_libraries(KakaKV PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite Boost::system Boost::thread Boost::chrono)
+target_link_libraries(KakaKV PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite Boost::system Boost::thread Boost::chrono Serialization)
