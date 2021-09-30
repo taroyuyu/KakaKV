@@ -6,9 +6,6 @@
 #define KAKAKV_ASIOCODEC_H
 #include <net/core/Encoder.h>
 #include <net/core/Decoder.h>
-#include <common/net/buffer/Buffer.h>
-#include <google/protobuf/message.h>
-#include <memory>
 namespace kakakv {
     namespace net {
         class ASIOCodec:public Encoder,public Decoder{
@@ -18,7 +15,7 @@ namespace kakakv {
              * @param outputBuffer 输出缓冲区
              */
             void
-            encapsulateMessageToByteStream(const ::google::protobuf::Message &message,std::shared_ptr<common::net::Buffer> outputBuffer) const;
+            encapsulateMessageToByteStream(const ::google::protobuf::Message &message,std::shared_ptr<common::net::Buffer> outputBuffer) const override;
             /**
              * 尝试从输入缓冲区中提取消息
              * @param inputBuffer 输入缓冲区

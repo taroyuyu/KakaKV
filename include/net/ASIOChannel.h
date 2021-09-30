@@ -13,6 +13,8 @@
 #include <message/RequestVoteResponse.h>
 #include <message/AppendEntries.h>
 #include <message/AppendEntriesResponse.h>
+#include <common/net/buffer/CircleBuffer.h>
+#include <mutex>
 namespace kakakv{
     namespace net{
         class Selector;
@@ -40,6 +42,8 @@ namespace kakakv{
             std::set<std::shared_ptr<AbstractHandler>> mHandlerSet;
             std::shared_ptr<Decoder> mDecoder;
             std::shared_ptr<Encoder> mEncoder;
+            std::mutex mCodecBufferMutex;
+            const std::shared_ptr<common::net::CircleBuffer> mCodecBuffer;
         };
     }
 }

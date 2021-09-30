@@ -9,7 +9,7 @@
 namespace kakakv{
     namespace net{
         ASIOChannel::ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket,std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder):
-        Channel(decoder,encoder),mSocket(std::move(socket)),mDecoder(decoder),mEncoder(encoder){
+        Channel(decoder,encoder),mSocket(std::move(socket)),mDecoder(decoder),mEncoder(encoder),mCodecBuffer(std::make_shared<common::net::CircleBuffer>(1024)){
 
         }
 
@@ -61,6 +61,12 @@ namespace kakakv{
             requestVoteMessage->set_lastlogterm(message->lastLogTerm);
             requestVoteMessage->set_lastlogindex(message->lastLogIndex);
             assert(requestVoteMessage->IsInitialized());
+            //2. 将消息封装成字节流
+            {
+                std::lock_guard<std::mutex> lock(this->mCodecBufferMutex);
+                assert(this->mCodecBuffer->getUsed() == 0);
+                this->mEncoder->encapsulateMessageToByteStream(*requestVoteMessage,this->mCodecBuffer);
+            }
         }
         // 发送RequestVoteResponse消息
         void ASIOChannel::writeRequestVoteResponse(const std::shared_ptr<const kakakv::message::RequestVoteResponse> message){
@@ -69,6 +75,12 @@ namespace kakakv{
             requestVoteResponseMessage->set_term(message->term);
             requestVoteResponseMessage->set_votegranted(message->voteGranted);
             assert(requestVoteResponseMessage->IsInitialized());
+            //2. 将消息封装成字节流
+            {
+                std::lock_guard<std::mutex> lock(this->mCodecBufferMutex);
+                assert(this->mCodecBuffer->getUsed() == 0);
+                this->mEncoder->encapsulateMessageToByteStream(*requestVoteResponseMessage,this->mCodecBuffer);
+            }
         }
         // 发送AppendEntries消息
         void ASIOChannel::writeAppendEntries(const std::shared_ptr<const kakakv::message::AppendEntries> message){
@@ -97,6 +109,12 @@ namespace kakakv{
                 }
             }
             assert(appendEntriesMessage->IsInitialized());
+            //2. 将消息封装成字节流
+            {
+                std::lock_guard<std::mutex> lock(this->mCodecBufferMutex);
+                assert(this->mCodecBuffer->getUsed() == 0);
+                this->mEncoder->encapsulateMessageToByteStream(*appendEntriesMessage,this->mCodecBuffer);
+            }
         }
         // 发送AppendEntriesResponse消息
         void ASIOChannel::writeAppendEntriesResponse(const std::shared_ptr<const kakakv::message::AppendEntriesResponse> message){
@@ -105,6 +123,12 @@ namespace kakakv{
             appendEntriesResponseMessage->set_term(message->term);
             appendEntriesResponseMessage->set_success(message->success);
             assert(appendEntriesResponseMessage->IsInitialized());
+            //2. 将消息封装成字节流
+            {
+                std::lock_guard<std::mutex> lock(this->mCodecBufferMutex);
+                assert(this->mCodecBuffer->getUsed() == 0);
+                this->mEncoder->encapsulateMessageToByteStream(*appendEntriesResponseMessage,this->mCodecBuffer);
+            }
         }
         // 关闭
         void ASIOChannel::close(){
