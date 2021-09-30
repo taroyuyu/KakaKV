@@ -5,14 +5,15 @@
 #include <net/Selector.h>
 #include <net/ASIOCodec.h>
 #include <net/ASIOChannel.h>
+
 namespace kakakv {
     namespace net {
         Selector::Listener::~Listener() {
         }
 
-        Selector::Selector(boost::asio::ip::tcp::endpoint listenEndpoint,unsigned int thread_pool_size) :
+        Selector::Selector(boost::asio::ip::tcp::endpoint listenEndpoint, unsigned int thread_pool_size) :
                 endpoint(listenEndpoint), mIOService(std::make_shared<boost::asio::io_service>()),
-                mIOThreadGroup(std::make_shared<boost::thread_group>()),mThreadPoolSize(thread_pool_size) {
+                mIOThreadGroup(std::make_shared<boost::thread_group>()), mThreadPoolSize(thread_pool_size) {
             assert(thread_pool_size > 0);
         }
 
@@ -34,9 +35,9 @@ namespace kakakv {
 
         void Selector::start() {
             // 1. 检查标识
-            if (this->mStart.load()){
+            if (this->mStart.load()) {
                 return;
-            }else{
+            } else {
                 std::lock_guard<std::mutex> lock(this->mStartMutex);
                 // 2. 设置标识
                 this->mStart.store(true);
@@ -62,20 +63,20 @@ namespace kakakv {
             this->waitForAccept();
             // 8. 启动线程池
             this->mWork = std::make_unique<boost::asio::io_service::work>(*this->mIOService);
-            for(unsigned int i = 0; i < this->mThreadPoolSize;++i){
-                this->mIOThreadGroup->create_thread(boost::bind(&Selector::workThreadHandler,this));
+            for (unsigned int i = 0; i < this->mThreadPoolSize; ++i) {
+                this->mIOThreadGroup->create_thread(boost::bind(&Selector::workThreadHandler, this));
             }
         }
 
-        void Selector::workThreadHandler(){
-            while(this->mStart.load()){
-                try{
+        void Selector::workThreadHandler() {
+            while (this->mStart.load() && this->mWork) {
+                try {
                     boost::system::error_code ec;
                     this->mIOService->run();
-                    if (ec){
+                    if (ec) {
                     }
-                }catch (std::exception &exception){
-                }catch (...){
+                } catch (std::exception &exception) {
+                } catch (...) {
                 }
             }
         }
@@ -83,24 +84,25 @@ namespace kakakv {
         void Selector::waitForAccept() {
             //1. 创建Socket并将其封装成Channel
             auto codec = std::make_shared<ASIOCodec>();
-            auto channel = std::make_shared<ASIOChannel>(std::make_unique<boost::asio::ip::tcp::socket>(*this->mIOService),codec,codec);
+            auto channel = std::make_shared<ASIOChannel>(
+                    std::make_unique<boost::asio::ip::tcp::socket>(*this->mIOService), codec, codec);
             //2. 等待客户端连接
-            this->mAcceptor->async_accept(*channel->mSocket,[this,channel](const boost::system::error_code & ec){
-                if (ec || !channel){
+            this->mAcceptor->async_accept(*channel->mSocket, [this, channel](const boost::system::error_code &ec) {
+                if (ec || !channel) {
                     return;
                 }
-                if (this->mStart.load()){
+                if (this->mStart.load()) {
                     //1. 通知Listener
-                    for(auto listenWeakPtr : this->mListenerSet){
+                    for (auto listenWeakPtr: this->mListenerSet) {
                         auto listener = listenWeakPtr.lock();
-                        if (!listener){
+                        if (!listener) {
                             continue;
                         }
                         listener->onReceiveConnect(channel);
                     }
                     //2. 等待新的客户端连接
                     this->waitForAccept();
-                }else{
+                } else {
                     // 关闭连接
                     channel->mSocket->close();
                 }
@@ -109,9 +111,9 @@ namespace kakakv {
 
         void Selector::shutdownGracefully() {
             //1. 检查标识
-            if (!this->mStart.load()){
+            if (!this->mStart.load()) {
                 return;
-            }else{
+            } else {
                 //2. 设置标识
                 std::lock_guard<std::mutex> lock(this->mStartMutex);
                 this->mStart.store(false);

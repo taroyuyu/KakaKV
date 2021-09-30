@@ -11,18 +11,18 @@
 #include <common/eventBus/EventBus.h>
 #include <memory>
 #include <map>
-#include <task/IOServce.h>
+#include <boost/asio.hpp>
 #include <future>
 namespace kakakv {
     namespace net {
         class OutboundChannelGroup {
         public:
-            OutboundChannelGroup(std::shared_ptr<task::IOServce> ioService,std::shared_ptr<common::EventBus> eventBus,cluster::NodeId selfNodeId);
+            OutboundChannelGroup(std::shared_ptr<boost::asio::io_service> ioService,std::shared_ptr<common::EventBus> eventBus,cluster::NodeId selfNodeId);
             std::shared_ptr<ASIOChannel> getOrConnect(cluster::NodeId nodeId,Endpoint endpoint);
             void closeAll();
         private:
             std::shared_ptr<ASIOChannel> connect(cluster::NodeId nodeId,Endpoint endpoint)throw(char *);
-            const std::shared_ptr<task::IOServce> mIOService;
+            const std::shared_ptr<boost::asio::io_service> mIOService;
             const std::shared_ptr<common::EventBus> mEventBus;
             const cluster::NodeId mSelfNodeId;
             std::map<cluster::NodeId,std::shared_ptr<ASIOChannel>> channelMap;

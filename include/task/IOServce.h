@@ -7,19 +7,28 @@
 
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <mutex>
 namespace kakakv {
     namespace task {
-        class IOServce {
+        class IOServce : private std::enable_shared_from_this<IOServce> {
         public:
-            IOServce(std::shared_ptr<boost::asio::io_service> ioService,std::shared_ptr<boost::thread_group> ioThreadGroup);
+            IOServce(unsigned int threadPoolSize = 3);
+
             void start();
+
             void shutdownGracefully();
-//        private:
-            std::shared_ptr<boost::asio::io_service> mIOService;
+
+            void post(std::function<void(std::shared_ptr<IOServce>)> task);
+
+            void dispatch(std::function<void(std::shared_ptr<IOServce>)> task);
+
         private:
+            void workThreadHandler();
+            std::mutex mStartMutex;
             std::atomic<bool> mStart;
             const boost::asio::ip::tcp::endpoint endpoint;
-//            const unsigned int mThreadPoolSize;
+            std::shared_ptr<boost::asio::io_service> mIOService;
+            const unsigned int mThreadPoolSize;
             std::shared_ptr<boost::thread_group> mIOThreadGroup;
             std::unique_ptr<boost::asio::io_service::work> mWork;
         };
