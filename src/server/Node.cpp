@@ -23,7 +23,7 @@ namespace kakakv {
 
         void Node::start() {
             // 如果已经启动，则直接跳过
-            if (this->started) {
+            if (this->started.load()) {
                 return;
             }
             // 注册自己到EventBus
@@ -32,20 +32,20 @@ namespace kakakv {
             this->context->connector()->initialize();
             // 启动时为Follower角色
             auto store = this->context->mStore;
-//            this->changeToRole(std::make_shared<role::Follower>(store->getTerm(),store->getVotedFor(),cluster::NULLNodeId));
+            this->changeToRole(std::make_shared<role::Follower>(store->getTerm(),store->getVotedFor(),cluster::NULLNodeId,this->scheduleElectionTimeOut()));
             this->started = true;
         }
 
         void Node::registerToEventBus() {
-            this->context->mEventBus.registerEvent(event::ElectionTimeout::eventType(), this);
-            this->context->mEventBus.registerEvent(event::ReceiveRequestVote::eventType(), this);
-            this->context->mEventBus.registerEvent(event::ReceiveRequestVoteResponse::eventType(), this);
-            this->context->mEventBus.registerEvent(event::ReceiveAppendEntries::eventType(), this);
-            this->context->mEventBus.registerEvent(event::ReceiveAppendEntriesResult::eventType(), this);
+            this->context->mEventBus->registerEvent(event::ElectionTimeout::eventType(), this);
+            this->context->mEventBus->registerEvent(event::ReceiveRequestVote::eventType(), this);
+            this->context->mEventBus->registerEvent(event::ReceiveRequestVoteResponse::eventType(), this);
+            this->context->mEventBus->registerEvent(event::ReceiveAppendEntries::eventType(), this);
+            this->context->mEventBus->registerEvent(event::ReceiveAppendEntriesResult::eventType(), this);
         }
 
         void Node::unregisterToEventBus() {
-            this->context->mEventBus.unregister(this);
+            this->context->mEventBus->unregister(this);
         }
 
         void Node::onEvent(std::shared_ptr<const common::Event> event) {

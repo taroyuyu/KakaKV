@@ -21,4 +21,4 @@ add_library(Common src/common/eventBus/Event.cpp src/common/eventBus/EventBus.cp
 add_library(Cluster src/cluster/GroupMember.cpp src/cluster/NodeEndpoint.cpp src/cluster/NodeGroup.cpp src/cluster/NodeId.cpp src/cluster/ReplicatingState.cpp)
 
 add_executable(KakaKV main.cpp)
-target_link_libraries(KakaKV NetWork Role Task Message Log Common Cluster)
+target_link_libraries(KakaKV NetWork Role Task Message Log Common Cluster Server)

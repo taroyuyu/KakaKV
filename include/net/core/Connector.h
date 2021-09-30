@@ -10,7 +10,7 @@ namespace kakakv{
         class Connector {
         public:
             Connector() = default;
-            virtual virtual ~Connector() = 0;
+            virtual ~Connector() = 0;
             /**
              * 初始化
              */

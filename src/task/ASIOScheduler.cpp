@@ -169,5 +169,9 @@ namespace kakakv {
             // 6. 返回ElectionTimeoutImpl对象
             return electionTimeout;
         }
+
+        void ASIOScheduler::stop()throw(InterruptedException){
+
+        }
     }
 }

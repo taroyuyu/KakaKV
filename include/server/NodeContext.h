@@ -34,21 +34,29 @@ namespace kakakv{
                 return this->mTaskExecutor;
             }
             cluster::NodeGroup mGroup;//成员表
-
         private:
             NodeContext(cluster::NodeId selfId,cluster::NodeGroup group): mSelfId(selfId), mGroup(group){
             };
             void setSelfId(const cluster::NodeId selfId){
                 this->mSelfId = selfId;
             }
+            void setEventBus(std::shared_ptr<common::EventBus> eventBus){
+                this->mEventBus = eventBus;
+            }
+            void setScheduler(std::shared_ptr<task::Scheduler> scheduler){
+                this->mScheduler = scheduler;
+            }
             void setConnector(std::shared_ptr<net::ASIOConnector> connector){
                 this->mConnector = connector;
+            }
+            void setTaskExecutor(std::shared_ptr<boost::asio::io_service> taskExecutor){
+                this->mTaskExecutor = taskExecutor;
             }
         private:
             cluster::NodeId mSelfId;
             std::shared_ptr<net::ASIOConnector> mConnector;
             std::shared_ptr<task::Scheduler> mScheduler;
-            common::EventBus mEventBus;
+            std::shared_ptr<common::EventBus> mEventBus;
             std::shared_ptr<boost::asio::io_service> mIOExecutor; // IO执行器
             std::shared_ptr<boost::asio::io_service> mTaskExecutor; // 任务执行器
             std::shared_ptr<NodeStore> mStore;// 部分角色状态数据存储

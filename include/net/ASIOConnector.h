@@ -8,7 +8,8 @@
 #include <net/core/Connector.h>
 #include <net/Selector.h>
 #include <cluster/NodeEndpoint.h>
-
+#include <net/OutboundChannelGroup.h>
+#include <net/InboundChannelGroup.h>
 namespace kakakv {
 
     namespace common{
@@ -27,9 +28,6 @@ namespace kakakv {
     }
 
     namespace net {
-
-        class InboundChannelGroup;
-        class OutboundChannelGroup;
 
         class ASIOConnector : public net::Connector, public  Selector::Listener,private std::enable_shared_from_this<ASIOConnector> {
         public:
@@ -76,14 +74,14 @@ namespace kakakv {
             void onReceiveConnect(std::shared_ptr<ASIOChannel> channel) override;
             std::shared_ptr<ASIOChannel> getChannel(cluster::NodeEndpoint endpoint);
 
-            const std::unique_ptr<Selector> selector; // Selector 线程池
-            const std::shared_ptr<task::ASIOIOService> ioService; // IO 线程池
-            const bool ioExecutorShared; // 是否和上层服务等共享IO线程池
-            const std::shared_ptr<common::EventBus> eventBus;
-            const std::string ip;
-            const unsigned short port;
-            const std::unique_ptr<InboundChannelGroup> inboundChannelGroup;
-            const std::unique_ptr<OutboundChannelGroup> outboundChannelGroup;
+            std::unique_ptr<Selector> selector; // Selector 线程池
+            std::shared_ptr<task::ASIOIOService> ioService; // IO 线程池
+            bool ioExecutorShared; // 是否和上层服务等共享IO线程池
+            std::shared_ptr<common::EventBus> eventBus;
+            std::string ip;
+            unsigned short port;
+            std::unique_ptr<InboundChannelGroup> inboundChannelGroup;
+            std::unique_ptr<OutboundChannelGroup> outboundChannelGroup;
         };
     }
 }

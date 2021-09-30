@@ -53,7 +53,7 @@ namespace kakakv {
         private:
             std::unique_ptr<log::LogComponent> logger;//日志组件
             std::shared_ptr<NodeContext> context;//核心组件上下文
-            bool started;//是否已经启动
+            std::atomic<bool> started;//是否已经启动
             std::shared_ptr<role::Role> role;//当前的角色及相关信息
         };
     }

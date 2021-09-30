@@ -3,27 +3,39 @@
 //
 
 #include <server/NodeBuilder.h>
-
+#include <common/eventBus/EventBus.h>
+#include <server/NodeContext.h>
+#include <server/Node.h>
 namespace kakakv {
     namespace server {
         NodeBuilder::NodeBuilder(cluster::NodeEndpoint endpoint): NodeBuilder({endpoint},endpoint.nodeId){
 
         }
-        NodeBuilder::NodeBuilder(std::vector<cluster::NodeEndpoint> endpoints,cluster::NodeId selfId): selfId(selfId){
+        NodeBuilder::NodeBuilder(std::vector<cluster::NodeEndpoint> endpoints,cluster::NodeId selfId):
+        group(endpoints,selfId),selfId(selfId),eventBus(std::make_shared<common::EventBus>()){
 
         }
         NodeBuilder & NodeBuilder::setConnector(std::shared_ptr<net::ASIOConnector> connector){
             this->mConnector = connector;
             return *this;
         }
-        std::unique_ptr<Node> NodeBuilder::build(){
+        NodeBuilder & NodeBuilder::setScheduler(std::shared_ptr<task::Scheduler> scheduler){
+            this->mScheduler = scheduler;
+            return *this;
+        }
 
+        NodeBuilder & NodeBuilder::setTaskExecutor(std::shared_ptr<task::IOService> taskExecutor){
+            this->mTaskExecutor = taskExecutor;
+            return *this;
+        }
+        std::unique_ptr<Node> NodeBuilder::build(){
+            return std::make_unique<Node>(this->buildContext());
         }
 
         std::shared_ptr<NodeContext> NodeBuilder::buildContext(){
-            net::Endpoint endpoint("127.0.1",8080);
-            cluster::NodeGroup group({this->selfId,endpoint});
-            auto context = std::shared_ptr<NodeContext>(new NodeContext(this->selfId,group));
+            auto context = std::shared_ptr<NodeContext>(new NodeContext(this->selfId,this->group));
+            context->setEventBus(this->eventBus);
+            context->setScheduler(this->mScheduler);
             context->setConnector(this->mConnector);
             return context;
         }

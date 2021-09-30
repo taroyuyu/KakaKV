@@ -14,6 +14,7 @@ namespace kakakv {
             ASIOScheduler(std::shared_ptr<ASIOIOService> ioService,const unsigned int minElectionTimeout,const unsigned int maxElectionTimeout,const unsigned int logReplicationDelay,const unsigned int logReplicationInterval);
             std::shared_ptr<LogReplicationTask> scheduleLogReplicationTask(Runnable task)override;
             std::shared_ptr<ElectionTimeout> scheduleElectionTimeout(Runnable task)override;
+            void stop()throw(InterruptedException)override;
         private:
 
             /**

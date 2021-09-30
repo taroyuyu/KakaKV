@@ -7,11 +7,14 @@
 #include <net/InboundChannelGroup.h>
 #include <net/OutboundChannelGroup.h>
 #include <common/eventBus/EventBus.h>
+
 namespace kakakv {
     namespace net {
-//        ASIOConnector::ASIOConnector(std::string listenIP,unsigned short listenPort,cluster::NodeId selfNodeId,std::shared_ptr<common::EventBus>):
-//        ip(listenIP),port(listenPort){
-//        }
+        ASIOConnector::ASIOConnector(cluster::NodeId selfNodeId, std::shared_ptr<common::EventBus> eventBus,
+                                     std::string listenIP, unsigned short listenPort) {
+
+        }
+
 
         void ASIOConnector::initialize() throw(char *) {
             //1. 监听Selector
@@ -90,8 +93,9 @@ namespace kakakv {
             }
         }
 
-        void ASIOConnector::onReceiveConnect(std::shared_ptr<ASIOChannel> channel){
+        void ASIOConnector::onReceiveConnect(std::shared_ptr<ASIOChannel> channel) {
         }
+
         std::shared_ptr<ASIOChannel> ASIOConnector::getChannel(cluster::NodeEndpoint endpoint) {
             return this->outboundChannelGroup->getOrConnect(endpoint.nodeId, endpoint.endpoint);
         }
