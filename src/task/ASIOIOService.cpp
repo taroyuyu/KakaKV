@@ -2,15 +2,16 @@
 // Created by 凌宇 on 2021/9/27.
 //
 
-#include <task/IOServce.h>
+#include <task/ASIOIOService.h>
 
 namespace kakakv {
     namespace task {
-        IOServce::IOServce(unsigned int threadPoolSize) :
-                mIOService(nullptr), mIOThreadGroup(nullptr), mThreadPoolSize(threadPoolSize) {
+        ASIOIOService::ASIOIOService(unsigned int threadPoolSize) :
+                IOService(threadPoolSize),
+                mIOService(nullptr), mIOThreadGroup(nullptr) {
         }
 
-        void IOServce::start() {
+        void ASIOIOService::start() {
             // 1. 检查标识
             if (this->mStart.load()) {
                 return;
@@ -26,11 +27,11 @@ namespace kakakv {
             // 5. 创建线程池
             this->mIOThreadGroup = std::make_shared<boost::thread_group>();
             for (unsigned int i = 0; i < this->mThreadPoolSize; ++i) {
-                this->mIOThreadGroup->create_thread(boost::bind(&IOServce::workThreadHandler, this));
+                this->mIOThreadGroup->create_thread(boost::bind(&ASIOIOService::workThreadHandler, this));
             }
         }
 
-        void IOServce::shutdownGracefully() {
+        void ASIOIOService::shutdownGracefully() {
             //1. 检查标识
             if (!this->mStart.load()) {
                 return;
@@ -45,7 +46,7 @@ namespace kakakv {
             this->mIOThreadGroup->join_all();
         }
 
-        void IOServce::workThreadHandler() {
+        void ASIOIOService::workThreadHandler() {
             while (this->mStart.load() && this->mWork) {
                 try {
                     boost::system::error_code ec;
@@ -58,14 +59,14 @@ namespace kakakv {
             }
         }
 
-        void IOServce::post(std::function<void(std::shared_ptr<IOServce>)> task) {
-            this->mIOService->post([this,task](){
+        void ASIOIOService::post(std::function<void(std::shared_ptr<IOService>)> task) {
+            this->mIOService->post([this, task]() {
                 task(this->shared_from_this());
             });
         }
 
-        void IOServce::dispatch(std::function<void(std::shared_ptr<IOServce>)> task){
-            this->mIOService->dispatch([this,task](){
+        void ASIOIOService::dispatch(std::function<void(std::shared_ptr<IOService>)> task) {
+            this->mIOService->dispatch([this, task]() {
                 task(this->shared_from_this());
             });
         }

@@ -6,12 +6,12 @@
 #define KAKAKV_ASIOSCHEDULER_H
 
 #include <task/Scheduler.h>
-#include <boost/asio.hpp>
+#include <task/ASIOIOService.h>
 namespace kakakv {
     namespace task {
-
         class ASIOScheduler : public Scheduler {
         public:
+            ASIOScheduler(std::shared_ptr<ASIOIOService> ioService,const unsigned int minElectionTimeout,const unsigned int maxElectionTimeout,const unsigned int logReplicationDelay,const unsigned int logReplicationInterval);
             std::shared_ptr<LogReplicationTask> scheduleLogReplicationTask(Runnable task)override;
             std::shared_ptr<ElectionTimeout> scheduleElectionTimeout(Runnable task)override;
         private:
@@ -32,9 +32,7 @@ namespace kakakv {
              * 日志复制间隔
              */
             const unsigned int logReplicationInterval;
-
-
-            std::shared_ptr<boost::asio::io_service> timerIOService;// 定时器处理线程
+            std::shared_ptr<ASIOIOService> timerIOService;// 定时器处理线程
         };
     }
 }
