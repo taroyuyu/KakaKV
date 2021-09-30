@@ -6,17 +6,31 @@
 #define KAKAKV_ASIOCONNECTOR_H
 
 #include <net/core/Connector.h>
-#include <string>
 #include <net/Selector.h>
-#include <task/ASIOIOService.h>
-#include <common/eventBus/EventBus.h>
-#include <cluster/NodeId.h>
-#include <net/InboundChannelGroup.h>
-#include <net/OutboundChannelGroup.h>
 #include <cluster/NodeEndpoint.h>
 
 namespace kakakv {
+
+    namespace common{
+        class EventBus;
+    }
+
+    namespace message{
+        class RequestVote;
+        class RequestVoteResponse;
+        class AppendEntries;
+        class AppendEntriesResponse;
+    }
+
+    namespace task{
+        class ASIOIOService;
+    }
+
     namespace net {
+
+        class InboundChannelGroup;
+        class OutboundChannelGroup;
+
         class ASIOConnector : public net::Connector, public  Selector::Listener,private std::enable_shared_from_this<ASIOConnector> {
         public:
             ASIOConnector(cluster::NodeId selfNodeId, std::shared_ptr<common::EventBus> eventBus,

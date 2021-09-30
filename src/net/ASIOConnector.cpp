@@ -3,7 +3,10 @@
 //
 
 #include <net/ASIOConnector.h>
-
+#include <task/ASIOIOService.h>
+#include <net/InboundChannelGroup.h>
+#include <net/OutboundChannelGroup.h>
+#include <common/eventBus/EventBus.h>
 namespace kakakv {
     namespace net {
 //        ASIOConnector::ASIOConnector(std::string listenIP,unsigned short listenPort,cluster::NodeId selfNodeId,std::shared_ptr<common::EventBus>):
