@@ -14,23 +14,19 @@ namespace kakakv {
             friend std::ostream &operator<<(std::ostream &cout, GeneralLogEntry &entry);
 
         public:
-            GeneralLogEntry(unsigned int index, unsigned int term, char *payload, unsigned long long payloadSize)
-                    : LogEntry(index, term), payload(payload), payloadSize(payloadSize) {
+            GeneralLogEntry(unsigned int index, unsigned int term, std::unique_ptr<std::string> payload)
+                    : LogEntry(index, term), payload(std::move(payload)){
             }
 
-            std::pair<char *, unsigned long long> getPayload() {
-                return std::make_pair(this->payload, this->payloadSize);
+            const std::string & getPayload() {
+                return *this->payload;
             }
 
         protected:
             /**
              * 日志的有效负载
              */
-            char *payload;
-            /**
-             * 日志有效负载的长度
-             */
-            unsigned long long payloadSize;
+            std::unique_ptr<std::string> payload;
         };
 
         std::ostream &operator<<(std::ostream &cout, GeneralLogEntry &entry);

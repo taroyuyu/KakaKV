@@ -15,7 +15,6 @@ namespace kakakv {
         class AbstractHandler {
         public:
             virtual ~AbstractHandler() = 0;
-        protected:
             virtual void channelRead(std::weak_ptr<const Channel> channel,std::shared_ptr<Message> message);
             virtual void channelWrite(std::weak_ptr<const Channel> channel,std::shared_ptr<Message> message);
             virtual void channelActive(std::weak_ptr<const Channel> channel);

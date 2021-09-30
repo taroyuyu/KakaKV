@@ -16,11 +16,11 @@ namespace kakakv {
                 mOutputCodecBuffer(std::make_shared<common::net::CircleBuffer>(1024)),
                 mInputCodecBuffer(std::make_shared<common::net::CircleBuffer>(1024)), mTmpInputBufferLength(1024),
                 mTmpInputBuffer(new char[1024]),
-                mTmpOutputBufferLength(0) {
+                mTmpOutputBufferLength(0), nodeId(cluster::NULLNodeId) {
 
         }
 
-        void ASIOChannel::addHandler(std::shared_ptr<AbstractHandler> handler) {
+        void ASIOChannel::addHandler(std::weak_ptr<AbstractHandler> handler) {
             auto it = this->mHandlerSet.find(handler);
             if (it != this->mHandlerSet.end()) {
                 return;
@@ -28,7 +28,7 @@ namespace kakakv {
             this->mHandlerSet.insert(handler);
         }
 
-        void ASIOChannel::removeHandler(std::shared_ptr<AbstractHandler> handler) {
+        void ASIOChannel::removeHandler(std::weak_ptr<AbstractHandler> handler) {
             auto it = this->mHandlerSet.find(handler);
             if (it == this->mHandlerSet.end()) {
                 return;
@@ -114,7 +114,7 @@ namespace kakakv {
                     entryItem->set_kind(message::AppendEntriesMessage_Entry_Kind_GeneralLog);
                     auto generalLog = std::dynamic_pointer_cast<log::GeneralLogEntry>(entry);
                     assert(generalLog);
-                    std::string data(generalLog->getPayload().first, generalLog->getPayload().second);
+                    std::string data = generalLog->getPayload();
                     entryItem->set_data(data);
                 } else if (typeid(entry.get()) == typeid(log::NoOpLogEntry *)) {
                     entryItem->set_kind(message::AppendEntriesMessage_Entry_Kind_NoOpLog);
@@ -204,11 +204,78 @@ namespace kakakv {
             this->mInputCodecBuffer->append(this->mTmpInputBuffer.get(), bytesTransferred);
             // 尝试提取数据
             std::shared_ptr<::google::protobuf::Message> message;
-            while(this->mDecoder->tryToretriveMessage(this->mInputCodecBuffer,message)){
+            while (this->mDecoder->tryToretriveMessage(this->mInputCodecBuffer, message)) {
+                // 将消息转换成内部格式
+                auto internalMessage = convertExternalMessageToInternalMessage(message);
+                if (!internalMessage) {
+                    assert(internalMessage);
+                    continue;
+                }
                 //分发消息
+                for (auto handlerWeakPtr: this->mHandlerSet) {
+                    auto handler = handlerWeakPtr.lock();
+                    if (!handler) {
+                        continue;
+                    }
+                    handler->channelRead(this->shared_from_this(), internalMessage);
+                }
             }
             // 继续等待数据
             this->waitForReceive();
+        }
+
+        std::shared_ptr<kakakv::message::Message> ASIOChannel::convertExternalMessageToInternalMessage(
+                std::shared_ptr<::google::protobuf::Message> message) {
+            assert(this->nodeId != cluster::NULLNodeId);
+            std::string messageType = message->GetTypeName();
+            if (messageType == message::RequestVoteMessage::default_instance().GetTypeName()) {
+                auto externalMessage = std::dynamic_pointer_cast<message::RequestVoteMessage>(message);
+                if (!externalMessage){
+                    assert(externalMessage);
+                    return nullptr;
+                }
+                auto internalMessage = std::make_shared<kakakv::message::RequestVote>(externalMessage->term(),cluster::NodeId(externalMessage->candidateid()),externalMessage->lastlogindex(),externalMessage->lastlogterm());
+                return internalMessage;
+            } else if (messageType == message::RequestVoteResponseMessage::default_instance().GetTypeName()) {
+                auto externalMessage = std::dynamic_pointer_cast<message::RequestVoteResponseMessage>(message);
+                if (!externalMessage){
+                    assert(externalMessage);
+                    return nullptr;
+                }
+                auto internalMessage = std::make_shared<kakakv::message::RequestVoteResponse>(externalMessage->term(),this->nodeId,externalMessage->votegranted());
+                return internalMessage;
+            } else if (messageType == message::AppendEntriesMessage::default_instance().GetTypeName()) {
+                auto externalMessage = std::dynamic_pointer_cast<message::AppendEntriesMessage>(message);
+                if (!externalMessage){
+                    assert(externalMessage);
+                    return nullptr;
+                }
+                auto internalMessage = std::make_shared<kakakv::message::AppendEntries>(externalMessage->term(),cluster::NodeId(externalMessage->leaderid()));
+                internalMessage->prevLogTerm = externalMessage->prevlogterm();
+                internalMessage->prevLogIndex = externalMessage->prevlogindex();
+                internalMessage->leaderCommitIndex = externalMessage->leadercommit();
+                for (auto item : externalMessage->entrylist()){
+                    auto entry = std::shared_ptr<log::LogEntry>();
+                    if (item.kind() == message::AppendEntriesMessage_Entry_Kind_GeneralLog){
+                        entry = std::make_shared<log::GeneralLogEntry>(item.index(),item.term(),std::unique_ptr<std::string>(item.release_data()));
+                    }else if (item.kind() == message::AppendEntriesMessage_Entry_Kind_NoOpLog){
+                        entry = std::make_shared<log::NoOpLogEntry>(item.index(),item.term());
+                    }
+                    internalMessage->entryList.push_back(entry);
+                }
+                return internalMessage;
+            } else if (messageType == message::AppendEntriesResponseMessage::default_instance().GetTypeName()) {
+                auto externalMessage = std::dynamic_pointer_cast<message::AppendEntriesResponseMessage>(message);
+                if (!externalMessage){
+                    assert(externalMessage);
+                    return nullptr;
+                }
+                auto internalMessage = std::make_shared<kakakv::message::AppendEntriesResponse>(externalMessage->term(),this->nodeId,externalMessage->success());
+                return internalMessage;
+            } else {
+                return nullptr;
+            }
+
         }
 
         // 关闭

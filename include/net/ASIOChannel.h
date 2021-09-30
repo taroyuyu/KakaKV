@@ -27,9 +27,9 @@ namespace kakakv {
             ASIOChannel(std::unique_ptr<boost::asio::ip::tcp::socket> socket, std::shared_ptr<Decoder> decoder,
                         std::shared_ptr<Encoder> encoder);
 
-            void addHandler(std::shared_ptr<AbstractHandler> handler) override;
+            void addHandler(std::weak_ptr<AbstractHandler> handler) override;
 
-            void removeHandler(std::shared_ptr<AbstractHandler> handler) override;
+            void removeHandler(std::weak_ptr<AbstractHandler> handler) override;
 
             void writeMessage(std::shared_ptr<const Message> message) override;
 
@@ -56,6 +56,7 @@ namespace kakakv {
             void onSend(const boost::system::error_code & ec,std::list<std::shared_ptr<std::vector<boost::uint8_t>>>::iterator itr);
             void waitForReceive();
             void onRecv(const boost::system::error_code & ec,size_t bytesTransferred);
+            std::shared_ptr<kakakv::message::Message> convertExternalMessageToInternalMessage(std::shared_ptr<::google::protobuf::Message> externalMessage);
             std::mutex mMutex;
             const std::unique_ptr<boost::asio::ip::tcp::socket> mSocket;
             std::list<std::vector<boost::uint8_t> > mInputBuffer;
@@ -64,11 +65,12 @@ namespace kakakv {
             std::list<std::shared_ptr<std::vector<boost::uint8_t>>> mOutputBuffer;
             std::unique_ptr<char[]> mTmpoutputBuffer;
             unsigned long mTmpOutputBufferLength;
-            std::set<std::shared_ptr<AbstractHandler>> mHandlerSet;
+            std::set<std::weak_ptr<AbstractHandler>,std::owner_less<std::weak_ptr<AbstractHandler>>> mHandlerSet;
             std::shared_ptr<Decoder> mDecoder;
             std::shared_ptr<Encoder> mEncoder;
             const std::shared_ptr<common::net::CircleBuffer> mOutputCodecBuffer;
             const std::shared_ptr<common::net::CircleBuffer> mInputCodecBuffer;
+            cluster::NodeId nodeId;
         };
     }
 }

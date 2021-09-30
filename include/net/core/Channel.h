@@ -16,8 +16,8 @@ namespace kakakv {
         public:
             Channel(std::shared_ptr<Decoder> decoder,std::shared_ptr<Encoder> encoder);
             virtual ~Channel() = 0;
-            virtual void addHandler(std::shared_ptr<AbstractHandler> handler) = 0;
-            virtual void removeHandler(std::shared_ptr<AbstractHandler> handler) = 0;
+            virtual void addHandler(std::weak_ptr<AbstractHandler> handler) = 0;
+            virtual void removeHandler(std::weak_ptr<AbstractHandler> handler) = 0;
             virtual void writeMessage(std::shared_ptr<const Message> message) = 0;
             bool isOpen()const;
             // 关闭
