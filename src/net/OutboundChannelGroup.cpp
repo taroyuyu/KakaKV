@@ -65,10 +65,13 @@ namespace kakakv {
             } else {
                 return it->second;
             }
-
         }
 
         void OutboundChannelGroup::closeAll() {
+            for(auto item : channelMap){
+                item.second->close();
+            }
+            this->channelMap.clear();
         }
     }
 }
