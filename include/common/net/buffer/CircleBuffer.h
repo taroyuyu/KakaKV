@@ -19,6 +19,12 @@ namespace kakakv {
 
                 void append(const void *buffer, const size_t bufferLength)override;
 
+                /**
+                 * 从CirlceBuffer中获取数据
+                 * @param buffer
+                 * @param bufferCapacity
+                 * @return 返回读取的数据大小
+                 */
                 size_t retrive(const void *buffer, const size_t bufferCapacity)override;
 
                 /**

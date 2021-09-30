@@ -6,6 +6,7 @@
 #include <net/serialization/KakaKVRaftMessage.pb.h>
 #include <log/GeneralLogEntry.h>
 #include <log/NoOpLogEntry.h>
+#include <boost/bind.hpp>
 
 namespace kakakv {
     namespace net {
@@ -152,7 +153,30 @@ namespace kakakv {
                 this->mTmpoutputBuffer.reset(new char[mTmpOutputBufferLength]);
             }
             //2. 将字节流放入临时输出缓冲区中
-            buffer->retrive(mTmpoutputBuffer.get(),mTmpOutputBufferLength);
+            auto length = buffer->retrive(mTmpoutputBuffer.get(),mTmpOutputBufferLength);
+            assert(buffer->getUsed() == 0);
+            //3. 将临时输出缓冲区中的数据拷贝到输出缓冲区
+            auto output = std::make_shared<std::vector<boost::uint8_t>>();
+            std::copy((const boost::uint8_t*)mTmpoutputBuffer.get(),(const boost::uint8_t*)mTmpoutputBuffer.get()+length,std::back_inserter(*output));
+            this->mOutputBuffer.push_back(output);
+            //4. 准备发送
+            bool canSendNow = this->mOutputBuffer.empty();
+            if (canSendNow){
+                boost::asio::async_write(*this->mSocket,boost::asio::buffer(*this->mOutputBuffer.front()),boost::bind(&ASIOChannel::onSend,this->shared_from_this(),boost::asio::placeholders::error,this->mOutputBuffer.begin()));
+            }
+        }
+
+        void ASIOChannel::onSend(const boost::system::error_code & ec,std::list<std::shared_ptr<std::vector<boost::uint8_t>>>::iterator itr){
+            if (ec){
+                //发送失败
+                this->close();
+                return;
+            }
+            this->mOutputBuffer.erase(itr);
+            if (this->mOutputBuffer.empty()){
+                return;
+            }
+            boost::asio::async_write(*this->mSocket,boost::asio::buffer(*this->mOutputBuffer.front()),boost::bind(&ASIOChannel::onSend,this->shared_from_this(),boost::asio::placeholders::error,this->mOutputBuffer.begin()));
         }
 
         // 关闭

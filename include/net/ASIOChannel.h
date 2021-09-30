@@ -15,7 +15,7 @@
 #include <message/AppendEntriesResponse.h>
 #include <common/net/buffer/CircleBuffer.h>
 #include <mutex>
-
+#include <list>
 namespace kakakv {
     namespace net {
         class Selector;
@@ -53,10 +53,13 @@ namespace kakakv {
 
         private:
             void sendByteStream(std::shared_ptr<common::net::CircleBuffer> buffer);
+            void onSend(const boost::system::error_code & ec,std::list<std::shared_ptr<std::vector<boost::uint8_t>>>::iterator itr);
             std::mutex mMutex;
             const std::unique_ptr<boost::asio::ip::tcp::socket> mSocket;
+            std::list<std::vector<boost::uint8_t> > mInputBuffer;
             std::unique_ptr<char[]> mTmpInputBuffer;
             unsigned long mTmpInputBufferLength;
+            std::list<std::shared_ptr<std::vector<boost::uint8_t>>> mOutputBuffer;
             std::unique_ptr<char[]> mTmpoutputBuffer;
             unsigned long mTmpOutputBufferLength;
             std::set<std::shared_ptr<AbstractHandler>> mHandlerSet;
