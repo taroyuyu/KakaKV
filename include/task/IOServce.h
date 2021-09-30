@@ -12,10 +12,16 @@ namespace kakakv {
         class IOServce {
         public:
             IOServce(std::shared_ptr<boost::asio::io_service> ioService,std::shared_ptr<boost::thread_group> ioThreadGroup);
+            void start();
+            void shutdownGracefully();
 //        private:
             std::shared_ptr<boost::asio::io_service> mIOService;
+        private:
+            std::atomic<bool> mStart;
+            const boost::asio::ip::tcp::endpoint endpoint;
+//            const unsigned int mThreadPoolSize;
             std::shared_ptr<boost::thread_group> mIOThreadGroup;
-            void shutdownGracefully();
+            std::unique_ptr<boost::asio::io_service::work> mWork;
         };
     }
 }

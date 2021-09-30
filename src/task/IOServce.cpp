@@ -10,6 +10,8 @@ namespace kakakv {
                 mIOService(ioService),mIOThreadGroup(ioThreadGroup){
         }
 
+        void IOServce::start(){
+        }
         void IOServce::shutdownGracefully(){
 
         }
