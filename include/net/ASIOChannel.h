@@ -52,20 +52,23 @@ namespace kakakv {
             void addCloseCallback(std::function<void(std::shared_ptr<Channel> channel)> callback) override;
 
         private:
-            void sendByteStream(std::shared_ptr<common::net::CircleBuffer> buffer);
+            void sendByteStream();
             void onSend(const boost::system::error_code & ec,std::list<std::shared_ptr<std::vector<boost::uint8_t>>>::iterator itr);
+            void waitForReceive();
+            void onRecv(const boost::system::error_code & ec,size_t bytesTransferred);
             std::mutex mMutex;
             const std::unique_ptr<boost::asio::ip::tcp::socket> mSocket;
             std::list<std::vector<boost::uint8_t> > mInputBuffer;
-            std::unique_ptr<char[]> mTmpInputBuffer;
-            unsigned long mTmpInputBufferLength;
+            const std::unique_ptr<char[]> mTmpInputBuffer;
+            const unsigned long mTmpInputBufferLength;
             std::list<std::shared_ptr<std::vector<boost::uint8_t>>> mOutputBuffer;
             std::unique_ptr<char[]> mTmpoutputBuffer;
             unsigned long mTmpOutputBufferLength;
             std::set<std::shared_ptr<AbstractHandler>> mHandlerSet;
             std::shared_ptr<Decoder> mDecoder;
             std::shared_ptr<Encoder> mEncoder;
-            const std::shared_ptr<common::net::CircleBuffer> mCodecBuffer;
+            const std::shared_ptr<common::net::CircleBuffer> mOutputCodecBuffer;
+            const std::shared_ptr<common::net::CircleBuffer> mInputCodecBuffer;
         };
     }
 }

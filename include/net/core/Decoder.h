@@ -23,7 +23,7 @@ namespace kakakv {
              */
             virtual bool
             tryToretriveMessage(std::shared_ptr<common::net::Buffer> inputBuffer,
-                                std::shared_ptr<::google::protobuf::Message> message) const = 0;
+                                std::shared_ptr<::google::protobuf::Message> & message) const = 0;
         };
     }
 }

@@ -23,7 +23,7 @@ namespace kakakv {
              * @return true表示成功提取到一条消息;false表示缓冲区中不存在一条完整的消息，即未提取到
              */
             bool
-            tryToretriveMessage(std::shared_ptr<common::net::Buffer>inputBuffer,std::shared_ptr<::google::protobuf::Message> message) const;
+            tryToretriveMessage(std::shared_ptr<common::net::Buffer>inputBuffer,std::shared_ptr<::google::protobuf::Message> & message) const;
         };
     }
 }

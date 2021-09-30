@@ -51,7 +51,7 @@ namespace kakakv {
         }
 
         bool
-        ASIOCodec::tryToretriveMessage(std::shared_ptr<common::net::Buffer>inputBuffer,std::shared_ptr<::google::protobuf::Message> message) const{
+        ASIOCodec::tryToretriveMessage(std::shared_ptr<common::net::Buffer>inputBuffer,std::shared_ptr<::google::protobuf::Message> & message) const{
             //1.从输入缓冲中提取前面几个字节，判断下一条消息的长度
             struct Datagram datagram;
 
