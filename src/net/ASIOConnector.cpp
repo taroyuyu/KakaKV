@@ -14,18 +14,6 @@ namespace kakakv {
 //        }
 
         void ASIOConnector::initialize() throw(char *) {
-            //            // 1. 创建端口
-//            if (!(1 <= this->port <= 65535))
-//                throw "Invalid Port";
-//            boost::system::error_code ec;
-//            boost::asio::ip::address ip_address = boost::asio::ip::address_v4::any();
-//            if (this->ip != "0.0.0.0") {
-//                ip_address = boost::asio::ip::address::from_string(this->ip, ec);
-//                if (ec.value() != 0) {
-//                    throw "Invalid IP Address:" + ec.message();
-//                }
-//            }
-//            boost::asio::ip::tcp::endpoint endpoint(ip_address, this->port);
             //1. 监听Selector
             this->selector->addListener(shared_from_this());
             //2. 启动Selector

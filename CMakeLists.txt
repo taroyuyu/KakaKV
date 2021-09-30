@@ -2,15 +2,23 @@ cmake_minimum_required(VERSION 3.19)
 project(KakaKV)
 
 set(CMAKE_CXX_STANDARD 14)
+
 # Boost库配置相关
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system thread chrono)
 include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(include)
 
-add_executable(KakaKV main.cpp src/log/LogEntry.cpp src/log/GeneralLogEntry.cpp src/log/NoOpLogEntry.cpp src/log/LogEntrySequence.cpp src/log/MemoryLogEntrySequence.cpp src/log/LogComponent.cpp include/log/LogComponent.h src/log/MemoryLogComponent.cpp include/log/MemoryLogComponent.h src/role/Role.cpp src/role/Follower.cpp src/role/Candidate.cpp src/role/Leader.cpp src/message/RequestVote.cpp src/message/RequestVoteResponse.cpp src/message/AppendEntries.cpp src/message/AppendEntriesResponse.cpp src/server/NodeContext.cpp src/cluster/NodeGroup.cpp src/cluster/GroupMember.cpp src/cluster/NodeEndpoint.cpp src/server/Node.cpp src/net/core/Connector.cpp src/task/TaskExecutor.cpp src/server/NodeStore.cpp src/server/MemoryNodeStore.cpp src/cluster/NodeId.cpp src/net/Endpoint.cpp test/src/MockConnector.cpp src/message/Message.cpp src/server/NodeBuilder.cpp test/src/NodeImplTest.cpp src/cluster/ReplicatingState.cpp include/cluster/ReplicatingState.h src/server/Scheduler.cpp include/server/Scheduler.h src/common/eventBus/Event.cpp src/common/eventBus/EventBus.cpp src/task/Scheduler.cpp src/task/ASIOScheduler.cpp include/task/ASIOScheduler.h src/task/ElectionTimeout.cpp src/task/LogReplicationTask.cpp include/server/events/ReceiveRequestVote.h include/server/events/ReceiveRequestVoteResponse.h include/server/events/ReceiveAppendEntries.h include/server/events/ReceiveAppendEntriesResult.h include/server/events/ElectionTimeout.h src/net/ASIOConnector.cpp include/net/ASIOConnector.h src/net/InboundChannelGroup.cpp include/net/InboundChannelGroup.h src/net/OutboundChannelGroup.cpp include/net/OutboundChannelGroup.h src/task/ASIOIOService.cpp include/task/ASIOIOService.h src/net/core/Channel.cpp include/net/core/Channel.h src/net/ASIOChannel.cpp include/net/ASIOChannel.h src/net/Selector.cpp include/net/Selector.h src/net/core/AbstractHandler.cpp include/net/core/AbstractHandler.h src/net/FromRemoteHandler.cpp include/net/FromRemoteHandler.h src/net/ToRemoteHandler.cpp include/net/ToRemoteHandler.h src/net/core/Message.cpp include/net/core/Message.h src/server/RaftMessageHandler.cpp include/server/RaftMessageHandler.h src/net/core/Encoder.cpp include/net/core/Encoder.h src/net/core/Decoder.cpp include/net/core/Decoder.h src/common/net/buffer/Buffer.cpp src/common/net/buffer/CircleBuffer.cpp include/common/net/buffer/CircleBuffer.h src/net/ASIOCodec.cpp include/net/ASIOCodec.h src/task/IOService.cpp include/task/IOService.h)
-
 find_package(protobuf CONFIG REQUIRED)
-add_library(Serialization src/net/serialization/KakaKVRaftMessage.pb.cc)
-target_link_libraries(Serialization PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
-target_link_libraries(KakaKV PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite Boost::system Boost::thread Boost::chrono Serialization)
+add_library(Server src/server/MemoryNodeStore.cpp src/server/Node.cpp src/server/NodeBuilder.cpp src/server/NodeContext.cpp src/server/NodeStore.cpp src/server/RaftMessageHandler.cpp src/server/Scheduler.cpp)
+add_library(NetWork src/net/core/AbstractHandler.cpp src/net/core/Channel.cpp src/net/core/Connector.cpp src/net/core/Decoder.cpp src/net/core/Encoder.cpp src/net/core/Message.cpp src/net/serialization/KakaKVRaftMessage.pb.cc src/net/ASIOChannel.cpp src/net/ASIOCodec.cpp src/net/ASIOConnector.cpp src/net/Endpoint.cpp src/net/FromRemoteHandler.cpp src/net/InboundChannelGroup.cpp src/net/OutboundChannelGroup.cpp src/net/Selector.cpp src/net/ToRemoteHandler.cpp)
+target_link_libraries(NetWork PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite Boost::system Boost::thread Boost::chrono Common)
+add_library(Role src/role/Candidate.cpp src/role/Follower.cpp src/role/Leader.cpp src/role/Role.cpp)
+add_library(Task src/task/ASIOIOService.cpp src/task/ASIOScheduler.cpp src/task/ElectionTimeout.cpp src/task/IOService.cpp src/task/LogReplicationTask.cpp src/task/Scheduler.cpp src/task/TaskExecutor.cpp)
+add_library(Message src/message/AppendEntries.cpp src/message/AppendEntriesResponse.cpp src/message/Message.cpp src/message/RequestVote.cpp src/message/RequestVoteResponse.cpp)
+add_library(Log src/log/GeneralLogEntry.cpp src/log/LogComponent.cpp src/log/LogEntry.cpp src/log/LogEntrySequence.cpp src/log/MemoryLogComponent.cpp src/log/MemoryLogEntrySequence.cpp src/log/NoOpLogEntry.cpp)
+add_library(Common src/common/eventBus/Event.cpp src/common/eventBus/EventBus.cpp src/common/net/buffer/Buffer.cpp src/common/net/buffer/CircleBuffer.cpp)
+add_library(Cluster src/cluster/GroupMember.cpp src/cluster/NodeEndpoint.cpp src/cluster/NodeGroup.cpp src/cluster/NodeId.cpp src/cluster/ReplicatingState.cpp)
+
+add_executable(KakaKV main.cpp)
+target_link_libraries(KakaKV NetWork Role Task Message Log Common Cluster)
