@@ -17,6 +17,7 @@
 #include <common/eventBus/EventListener.h>
 namespace kakakv {
     namespace server {
+        class StateMachine;
         class Node:protected common::EventListener{
         public:
             Node(std::shared_ptr<NodeContext> context);
@@ -24,12 +25,13 @@ namespace kakakv {
             };
             void start();
             void stop()throw(InterruptedException);
+            void registerStateMachine(std::shared_ptr<StateMachine> stateMachine);
+        protected:
             void onElectionTimeout();
             void onReceiveRequestVote(std::shared_ptr<message::RequestVote> request);
             void onReceiveRequestVoteResponse(std::shared_ptr<message::RequestVoteResponse> response);
             void onReceiveAppendEntries(std::shared_ptr<message::AppendEntries> request);
             void onReceiveAppendEntriesResult(std::shared_ptr<message::AppendEntriesResponse> response);
-        protected:
             /**
              * 变更角色：统一角色变更的代码，以及在角色变化时同步到NodeStore中
              * @param newRole
@@ -50,11 +52,13 @@ namespace kakakv {
             void onEvent(std::shared_ptr<const common::Event> event)override;
             std::shared_ptr<task::ElectionTimeout> scheduleElectionTimeOut();
             std::shared_ptr<task::LogReplicationTask> scheduleLogReplicationTask();
+            void advanceCommitIndex();
         private:
             std::unique_ptr<log::LogComponent> logger;//日志组件
             std::shared_ptr<NodeContext> context;//核心组件上下文
             std::atomic<bool> started;//是否已经启动
             std::shared_ptr<role::Role> role;//当前的角色及相关信息
+            std::shared_ptr<StateMachine> stateMachine;//状态机
         };
     }
 }

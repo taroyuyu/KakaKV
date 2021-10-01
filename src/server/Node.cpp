@@ -12,7 +12,7 @@
 #include <server/events/ReceiveAppendEntriesResult.h>
 #include <server/events/ReceiveRequestVote.h>
 #include <server/events/ReceiveRequestVoteResponse.h>
-
+#include <server/StateMachine.h>
 namespace kakakv {
     namespace server {
         Node::Node(std::shared_ptr<NodeContext> context) : logger(std::make_unique<log::MemoryLogComponent>()),
@@ -518,6 +518,14 @@ namespace kakakv {
                 this->context->mLog->advanceCommitIndex(newCommitIndex, appendEntriesMessage->term);
             }
             return result;
+        }
+
+        void Node::registerStateMachine(std::shared_ptr<StateMachine> stateMachine){
+            this->stateMachine = stateMachine;
+        }
+
+        void Node::advanceCommitIndex(){
+//            this->stateMachine->apply()
         }
     }
 }
