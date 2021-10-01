@@ -1,0 +1,33 @@
+syntax = "proto3";
+package kakakv.service.net.message;
+
+// GET 命令
+message GetCommandMessage{
+  string key = 1;
+}
+
+message GetCommandResponseMessage{
+  bool found = 1;
+  bytes value = 2;
+}
+
+// SET 命令
+message SetCommandMessage{
+  string requiredId = 1;
+  string key = 2;
+  bytes value = 3;
+}
+
+// 响应
+
+message RedirectMessage{
+  string leaderId = 1;
+}
+
+message SuccessMessage{
+}
+
+message FailureMessage{
+  uint32 errorCode = 1;
+  string message = 2;
+}
