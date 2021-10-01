@@ -20,7 +20,7 @@ namespace kakakv {
              * 获取 lastApplied
              * @return
              */
-            virtual unsigned long long getLastApplied() = 0;
+            virtual unsigned long long getLastApplied()const = 0;
             /**
              * 应用日志
              * @param context
