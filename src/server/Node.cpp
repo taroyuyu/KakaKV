@@ -13,12 +13,17 @@
 #include <server/events/ReceiveRequestVote.h>
 #include <server/events/ReceiveRequestVoteResponse.h>
 #include <server/StateMachine.h>
+
 namespace kakakv {
     namespace server {
         Node::Node(std::shared_ptr<NodeContext> context) : logger(std::make_unique<log::MemoryLogComponent>()),
                                                            context(context), started(false), role(
                         nullptr) {
 
+        }
+
+        void Node::registerStateMachine(std::shared_ptr<StateMachine> stateMachine) {
+            this->stateMachine = stateMachine;
         }
 
         void Node::start() {
@@ -32,8 +37,16 @@ namespace kakakv {
             this->context->connector()->initialize();
             // 启动时为Follower角色
             auto store = this->context->mStore;
-            this->changeToRole(std::make_shared<role::Follower>(store->getTerm(),store->getVotedFor(),cluster::NULLNodeId,this->scheduleElectionTimeOut()));
+            this->changeToRole(
+                    std::make_shared<role::Follower>(store->getTerm(), store->getVotedFor(), cluster::NULLNodeId,
+                                                     this->scheduleElectionTimeOut()));
             this->started = true;
+        }
+
+        void Node::stop() throw(InterruptedException) {
+        }
+
+        void Node::appendLog(std::string commandBytes) {
         }
 
         void Node::registerToEventBus() {
@@ -66,12 +79,12 @@ namespace kakakv {
 
         }
 
-        std::shared_ptr<task::ElectionTimeout> Node::scheduleElectionTimeOut(){
-            return this->context->scheduler()->scheduleElectionTimeout(std::bind(&Node::onElectionTimeout,this));
+        std::shared_ptr<task::ElectionTimeout> Node::scheduleElectionTimeOut() {
+            return this->context->scheduler()->scheduleElectionTimeout(std::bind(&Node::onElectionTimeout, this));
         }
 
-        std::shared_ptr<task::LogReplicationTask> Node::scheduleLogReplicationTask(){
-            return this->context->scheduler()->scheduleLogReplicationTask(std::bind(&Node::replicateLog,this));
+        std::shared_ptr<task::LogReplicationTask> Node::scheduleLogReplicationTask() {
+            return this->context->scheduler()->scheduleLogReplicationTask(std::bind(&Node::replicateLog, this));
         }
 
         /**
@@ -327,12 +340,15 @@ namespace kakakv {
             int countOfMajor = this->context->mGroup.listReplicationTarget().size() + 1;
             // 取消选举超时定时器
             this->role->cancelTimeoutOrTask();
-            if (currentVotesCount > countOfMajor/2){// 票数过半
+            if (currentVotesCount > countOfMajor / 2) {// 票数过半
                 // 成为Leader角色
-                this->changeToRole(std::make_shared<role::Leader>(this->role->getTerm(),this->scheduleLogReplicationTask()));
-            }else{
+                this->changeToRole(
+                        std::make_shared<role::Leader>(this->role->getTerm(), this->scheduleLogReplicationTask()));
+            } else {
                 // 修改收到的票数，并重新创建选举超时定时器
-                this->changeToRole(std::make_shared<role::Candidate>(this->role->getTerm(),this->scheduleElectionTimeOut(),currentVotesCount));
+                this->changeToRole(
+                        std::make_shared<role::Candidate>(this->role->getTerm(), this->scheduleElectionTimeOut(),
+                                                          currentVotesCount));
             }
         }
 
@@ -431,8 +447,9 @@ namespace kakakv {
             this->role->cancelTimeoutOrTask();
 
             // 重新创建选举超时定时器或者空定时器
-            std::shared_ptr<task::ElectionTimeout> electionTimeout = scheduleElectionTimeout ? this->scheduleElectionTimeOut(): nullptr;
-            this->changeToRole(std::make_shared<role::Follower>(term,votedFor,leaderId,electionTimeout));
+            std::shared_ptr<task::ElectionTimeout> electionTimeout = scheduleElectionTimeout
+                                                                     ? this->scheduleElectionTimeOut() : nullptr;
+            this->changeToRole(std::make_shared<role::Follower>(term, votedFor, leaderId, electionTimeout));
         }
 
         /**
@@ -520,11 +537,7 @@ namespace kakakv {
             return result;
         }
 
-        void Node::registerStateMachine(std::shared_ptr<StateMachine> stateMachine){
-            this->stateMachine = stateMachine;
-        }
-
-        void Node::advanceCommitIndex(){
+        void Node::advanceCommitIndex() {
 //            this->stateMachine->apply()
         }
     }

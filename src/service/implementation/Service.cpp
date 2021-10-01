@@ -10,7 +10,13 @@ namespace kakakv {
             node->registerStateMachine(this->shared_from_this());
         }
 
-        void Service::apply(std::shared_ptr<log::LogEntry> entry){
+        unsigned long long Service::getLastApplied(){
+        }
+        void Service::applyLog(std::shared_ptr<server::StateMachineContext> context,unsigned long long index,std::string commandBytes,unsigned long long firstLogIndex){
+        }
+        void Service::shutdown(){
+        }
+        void Service::applyEntry(std::shared_ptr<log::LogEntry> entry){
 
         }
     }

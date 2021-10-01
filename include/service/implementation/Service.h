@@ -10,12 +10,16 @@
 namespace kakakv {
     namespace server {
         class Node;
+        class StateMachineContext;
     }
     namespace service {
         class Service : public server::StateMachine, public std::enable_shared_from_this<Service> {
+        public:
             Service(std::shared_ptr<server::Node> node);
-
-            void apply(std::shared_ptr<log::LogEntry> entry) override;
+            unsigned long long getLastApplied()override;
+            void applyLog(std::shared_ptr<server::StateMachineContext> context,unsigned long long index,std::string commandBytes,unsigned long long firstLogIndex)override;
+            void shutdown()override;
+            void applyEntry(std::shared_ptr<log::LogEntry> entry) override;
         };
     }
 }
