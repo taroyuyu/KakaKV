@@ -4,32 +4,23 @@
 
 #include <service/implementation/Service.h>
 #include <server/Node.h>
-#include <server/StateMachine.h>
+#include <server/AbstractSingleThreadStateMachine.h>
 #include <service/command/GetCommandResponse.h>
 #include <service/command/Redirect.h>
 namespace kakakv {
     namespace service {
 
         namespace {
-            class StateMachineImpl : public server::StateMachine {
-                unsigned long long getLastApplied()override;
-                void applyLog(std::shared_ptr<server::StateMachineContext> context,unsigned long long index,std::string commandBytes,unsigned long long firstLogIndex)override;
-                void shutdown()override;
-                void applyEntry(std::shared_ptr<log::LogEntry> entry) override;
+            class StateMachineImpl : public server::AbstractSingleThreadStateMachine {
+            public:
+                void applyCommand(std::string commandBytes)override;
             };
-
-            unsigned long long StateMachineImpl::getLastApplied() {
-            }
-
-            void StateMachineImpl::applyLog(std::shared_ptr<server::StateMachineContext> context, unsigned long long index,
-                                   std::string commandBytes, unsigned long long firstLogIndex) {
-            }
-
-            void StateMachineImpl::shutdown() {
-            }
-
-            void StateMachineImpl::applyEntry(std::shared_ptr<log::LogEntry> entry) {
-
+            void StateMachineImpl::applyCommand(std::string commandBytes){
+                // TODO:根据commandBytes恢复命令
+                std::shared_ptr<command::SetCommand> command;
+                // TODO:修改数据
+                // TODO:查找连接
+                // TODO:发送处理响应
             }
         }
 

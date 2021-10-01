@@ -60,10 +60,6 @@ namespace kakakv {
             }
         }
 
-        void Node::getRoleTypeAndLeaderId(){
-            if (this->rol)
-        }
-
         void Node::registerToEventBus() {
             this->context->mEventBus->registerEvent(event::ElectionTimeout::eventType(), this);
             this->context->mEventBus->registerEvent(event::ReceiveRequestVote::eventType(), this);
