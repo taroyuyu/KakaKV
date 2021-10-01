@@ -6,11 +6,11 @@
 #define KAKAKV_SETCOMMAND_H
 
 #include <string>
-
+#include <service/command/Command.h>
 namespace kakakv {
     namespace service {
         namespace command {
-            class SetCommand {
+            class SetCommand:public Command{
             public:
                 SetCommand(std::string requestId,std::string key,std::string value):requestId(requestId),key(key),value(value){
 

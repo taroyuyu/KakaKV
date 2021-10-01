@@ -6,20 +6,24 @@
 #define KAKAKV_FAILURE_H
 
 #include <string>
+#include <service/command/Response.h>
 
 namespace kakakv {
     namespace service {
         namespace command {
-            class Failure {
+            class Failure : public Response {
             public:
-                Failure(int errorCode,std::string message):errorCode(errorCode),message(message){
+                Failure(int errorCode, std::string message) : errorCode(errorCode), message(message) {
                 }
-                int getErrorCode()const{
+
+                int getErrorCode() const {
                     return this->errorCode;
                 }
-                std::string getMessage()const{
+
+                std::string getMessage() const {
                     return this->message;
                 }
+
             private:
                 const int errorCode;
                 const std::string message;

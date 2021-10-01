@@ -5,10 +5,11 @@
 #ifndef KAKAKV_GETCOMMANDRESPONSE_H
 #define KAKAKV_GETCOMMANDRESPONSE_H
 #include <string>
+#include <service/command/Response.h>
 namespace kakakv {
     namespace service {
         namespace command {
-            class GetCommandResponse {
+            class GetCommandResponse:public Response{
             public:
                 GetCommandResponse(bool found,std::string value):found(found),value(value){
                 }

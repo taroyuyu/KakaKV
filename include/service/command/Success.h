@@ -4,11 +4,11 @@
 
 #ifndef KAKAKV_SUCCESS_H
 #define KAKAKV_SUCCESS_H
-
+#include <service/command/Response.h>
 namespace kakakv {
     namespace service {
         namespace command {
-            class Success {
+            class Success:public Response{
             public:
                 Success(){
                 }

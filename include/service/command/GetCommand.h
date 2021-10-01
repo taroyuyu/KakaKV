@@ -5,10 +5,11 @@
 #ifndef KAKAKV_GETCOMMAND_H
 #define KAKAKV_GETCOMMAND_H
 #include <string>
+#include <service/command/Command.h>
 namespace kakakv{
     namespace service{
         namespace command{
-            class GetCommand {
+            class GetCommand:public Command{
             public:
                 GetCommand(std::string key):key(key){
                 }

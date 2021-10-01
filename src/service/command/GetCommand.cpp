@@ -3,7 +3,6 @@
 //
 
 #include <service/command/GetCommand.h>
-
 namespace kakakv {
     namespace service {
         namespace command {

@@ -5,10 +5,11 @@
 #ifndef KAKAKV_REDIRECT_H
 #define KAKAKV_REDIRECT_H
 #include <cluster/NodeId.h>
+#include <service/command/Response.h>
 namespace kakakv {
     namespace service {
         namespace command {
-            class Redirect {
+            class Redirect:public Response{
             public:
                 Redirect(cluster::NodeId leaderId):leaderId(leaderId){
                 }
