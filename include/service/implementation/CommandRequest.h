@@ -7,24 +7,46 @@
 
 #include <memory>
 #include <functional>
+#include <net/ASIOChannel.h>
+
 namespace kakakv {
-    namespace net {
-        class ASIOChannel;
-    }
     namespace service {
         namespace command {
             class Command;
 
             class Response;
         }
-    class CommandRequest:private std::enable_shared_from_this<CommandRequest>{
+
+        class CommandRequestBase{
         public:
-            CommandRequest(std::shared_ptr<command::Command> command,std::shared_ptr<net::ASIOChannel> channel);
-            void reply(std::shared_ptr<command::Response> response);
-            void addCloseListener(std::function<void(std::shared_ptr<CommandRequest> commandRequest)> callback);
-            std::shared_ptr<const command::Command> getCommand();
+            virtual ~CommandRequestBase() = 0;
+        };
+
+        template<typename CommandType>
+        class CommandRequest : public CommandRequestBase,private std::enable_shared_from_this<CommandRequest<CommandType>> {
+        public:
+            CommandRequest(std::shared_ptr<CommandType> command, std::shared_ptr<net::ASIOChannel> channel) :
+                    command(command), channel(channel) {
+
+            }
+
+            void reply(std::shared_ptr<command::Response> response) {
+
+            }
+
+            void addCloseListener(
+                    std::function<void(std::shared_ptr<CommandRequest<CommandType>> commandRequest)> callback) {
+                this->channel->addCloseCallback([callback, this](std::shared_ptr<net::Channel> channel) {
+                    callback(this->shared_from_this());
+                });
+            }
+
+            std::shared_ptr<const CommandType> getCommand() {
+                return this->command;
+            }
+
         private:
-            const std::shared_ptr<command::Command> command;
+            const std::shared_ptr<CommandType> command;
             const std::shared_ptr<net::ASIOChannel> channel;
         };
     }

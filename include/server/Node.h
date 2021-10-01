@@ -42,6 +42,12 @@ namespace kakakv {
              * @param commandBytes
              */
             void appendLog(std::string commandBytes);
+            enum class RoleType{
+                Leader = 1,
+                Follower = 2,
+                Candidate = 3,
+            };
+            std::pair<RoleType,cluster::NodeId> getRoleTypeAndLeaderId();
         protected:
             void onElectionTimeout();
 

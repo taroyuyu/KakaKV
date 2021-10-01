@@ -13,9 +13,10 @@ namespace kakakv{
             public:
                 GetCommand(std::string key):key(key){
                 }
-                std::string getKey(){
+                std::string getKey()const{
                     return this->key;
                 }
+                std::string toBytes()const override;
             private:
                 std::string key;
             };

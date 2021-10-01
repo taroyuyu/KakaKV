@@ -6,7 +6,9 @@
 namespace kakakv {
     namespace service {
         namespace command {
-
+            std::string GetCommand::toBytes()const{
+                return "";
+            }
         }
     }
 }

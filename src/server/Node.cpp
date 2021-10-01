@@ -46,7 +46,22 @@ namespace kakakv {
         void Node::stop() throw(InterruptedException) {
         }
 
-        void Node::appendLog(std::string commandBytes) {
+        std::pair<Node::RoleType,cluster::NodeId> Node::getRoleTypeAndLeaderId(){
+            if (typeid(this->role.get()) == typeid(role::Leader*)){
+                return {RoleType::Leader,this->context->selfId()};
+            }else if (typeid(this->role.get()) == typeid(role::Follower*)){
+                auto follower = std::dynamic_pointer_cast<role::Follower>(this->role);
+                assert(follower);
+                return {RoleType::Follower,follower->getLeaderId()};
+            }else if (typeid(this->role.get()) == typeid(role::Candidate*)){
+                return {RoleType::Candidate,cluster::NULLNodeId};
+            }else{
+                assert(false);
+            }
+        }
+
+        void Node::getRoleTypeAndLeaderId(){
+            if (this->rol)
         }
 
         void Node::registerToEventBus() {

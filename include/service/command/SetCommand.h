@@ -24,6 +24,7 @@ namespace kakakv {
                 std::string getValue()const{
                     return this->value;
                 }
+                std::string toBytes()const override;
             private:
                 const std::string requestId;
                 const std::string key;
